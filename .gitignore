@@ -1,0 +1,64 @@
+# Laravel specific
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Environment files
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Composer
+composer.phar
+composer.lock
+
+# NPM/Yarn
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Laravel Mix
+/public/css/
+/public/js/
+/public/mix-manifest.json
+
+# PHP
+*.log
+
+# Testing
+.phpunit.cache
+phpunit.xml
+
+# Docker
+docker-compose.override.yml
+
+# Backup files
+*.bak
+*.backup
+*.sql
+*.sqlite
