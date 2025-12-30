@@ -1,4 +1,4 @@
-# 🕌 Inventory Barang Masjid V2
+# 🕌 Inventory Barang Masjid V3
 
 Aplikasi web untuk mencatat inventaris barang masjid dengan fitur lengkap.
 
@@ -47,53 +47,55 @@ APP_PORT=8085      # Port web (default: 8080)
 DB_HOST_PORT=3308  # Port database (default: 3307)
 ```
 
-## Fitur V2 🚀
+## Fitur Lengkap 🚀
 
-### 1. Manajemen Barang
+### MVP - Manajemen Barang
 - ✅ CRUD barang dengan foto
 - ✅ Filter & pencarian
-- ✅ Resize foto otomatis (maks 1200px)
+- ✅ Master kategori & lokasi
+- ✅ Laporan print-friendly
 
-### 2. Peminjaman Barang
-- ✅ Catat peminjaman (siapa, kapan, berapa)
-- ✅ Tracking jatuh tempo
-- ✅ Pengembalian dengan kondisi
-- ✅ Warning untuk yang terlambat
+### V2 - Extended Features
+- ✅ Peminjaman barang dengan tracking
+- ✅ Mutasi stok dengan history
+- ✅ Export Excel (CSV) & PDF
+- ✅ User & Role management
+- ✅ Backup otomatis harian
 
-### 3. Mutasi Stok
-- ✅ Catat masuk/keluar barang
-- ✅ Alasan: beli, rusak, hilang, donasi, dll
-- ✅ Riwayat mutasi per barang
-- ✅ Auto sync dengan stok
-
-### 4. Export Data
-- ✅ Export Excel (CSV)
-- ✅ Export PDF
-- ✅ Filter sebelum export
-
-### 5. User & Role
-- ✅ **Admin**: Semua akses
-- ✅ **Operator**: CRUD barang & peminjaman
-- ✅ **Viewer**: Hanya lihat & export
-
-### 6. Backup Otomatis
-- ✅ Backup database harian (02:00)
-- ✅ Kompresi .gz
-- ✅ Retention 30 hari
-- ✅ Download & hapus manual
+### V3 - Stability & Usability
+- ✅ Dashboard overview
+- ✅ Warning peminjaman terlambat
+- ✅ Feedback system
+- ✅ Technical documentation
+- ✅ Unit & Feature tests
 
 ## Menu Aplikasi
 
 | Menu | Fungsi |
 |------|--------|
+| 📊 Dashboard | Overview & statistik |
 | Inventaris | Daftar barang + CRUD |
-| Peminjaman | Kelola pinjam-meminjam |
+| Pinjam | Kelola peminjaman |
 | Mutasi | Riwayat perubahan stok |
 | Kategori | Master kategori |
 | Lokasi | Master lokasi |
 | Laporan | Laporan + export |
-| Pengguna | Kelola user (Admin) |
+| User | Kelola pengguna (Admin) |
 | Backup | Kelola backup (Admin) |
+| 💬 | Feedback (Admin) |
+
+## Role & Permission
+
+| Permission | Admin | Operator | Viewer |
+|------------|:-----:|:--------:|:------:|
+| View items | ✅ | ✅ | ✅ |
+| Create/Edit items | ✅ | ✅ | ❌ |
+| Delete items | ✅ | ❌ | ❌ |
+| Manage loans | ✅ | ✅ | ❌ |
+| Manage stock | ✅ | ✅ | ❌ |
+| Export data | ✅ | ✅ | ✅ |
+| Manage users | ✅ | ❌ | ❌ |
+| Manage backups | ✅ | ❌ | ❌ |
 
 ## Tech Stack
 
@@ -104,15 +106,33 @@ DB_HOST_PORT=3308  # Port database (default: 3307)
 - Nginx
 - DomPDF
 
+## Testing
+
+```bash
+# Run all tests
+docker-compose exec app php artisan test
+
+# Run unit tests only
+docker-compose exec app php artisan test --filter=Unit
+
+# Run feature tests only
+docker-compose exec app php artisan test --filter=Feature
+```
+
+## Documentation
+
+Technical documentation tersedia di folder `/docs`:
+- [Overview](docs/README.md)
+- [Loans Module](docs/module-loans.md)
+- [Stock Movements Module](docs/module-stock-movements.md)
+- [Users Module](docs/module-users.md)
+- [Backup Module](docs/module-backup.md)
+- [Export Module](docs/module-export.md)
+
 ## Scheduler (Backup Otomatis)
 
 Untuk mengaktifkan backup otomatis, tambahkan cron job:
 
 ```bash
 * * * * * cd /path/to/project/src && php artisan schedule:run >> /dev/null 2>&1
-```
-
-Atau di Docker:
-```bash
-docker-compose exec app php artisan schedule:run
 ```

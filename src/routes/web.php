@@ -11,6 +11,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FeedbackController;
 
 // Auth routes
 Route::middleware('guest')->group(function () {
@@ -22,21 +24,22 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Protected routes
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return redirect()->route('items.index');
-    });
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Items - All roles can view
     Route::get('/items', [ItemController::class, 'index'])->name('items.index');
-    Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.show');
     
-    // Items - Admin & Operator only
+    // Items - Admin & Operator only (MUST be before {item} route)
     Route::middleware('role:admin,operator')->group(function () {
         Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
         Route::post('/items', [ItemController::class, 'store'])->name('items.store');
         Route::get('/items/{item}/edit', [ItemController::class, 'edit'])->name('items.edit');
         Route::put('/items/{item}', [ItemController::class, 'update'])->name('items.update');
     });
+    
+    // Items - Show (after /create to avoid conflict)
+    Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.show');
     
     // Items - Admin only delete
     Route::delete('/items/{item}', [ItemController::class, 'destroy'])
@@ -82,6 +85,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/export', [ExportController::class, 'index'])->name('export.index');
     Route::get('/export/excel', [ExportController::class, 'excel'])->name('export.excel');
     Route::get('/export/pdf', [ExportController::class, 'pdf'])->name('export.pdf');
+
+    // Feedback - All roles can submit
+    Route::get('/feedbacks/create', [FeedbackController::class, 'create'])->name('feedbacks.create');
+    Route::post('/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+    
+    // Feedback management - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/feedbacks', [FeedbackController::class, 'index'])->name('feedbacks.index');
+        Route::put('/feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
+        Route::delete('/feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
+    });
 
     // Users - Admin only
     Route::middleware('role:admin')->group(function () {

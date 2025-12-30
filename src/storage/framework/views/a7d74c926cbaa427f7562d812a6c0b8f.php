@@ -5,7 +5,7 @@
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Tambah Barang</h1>
 
     <div class="bg-white rounded-lg shadow p-6">
-        <form action="<?php echo e(route('items.store')); ?>" method="POST">
+        <form action="<?php echo e(route('items.store')); ?>" method="POST" enctype="multipart/form-data">
             <?php echo csrf_field(); ?>
             
             <div class="mb-4">
@@ -70,6 +70,13 @@
                         <option value="rusak" <?php echo e(old('condition') == 'rusak' ? 'selected' : ''); ?>>Rusak</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">Foto Barang</label>
+                <input type="file" name="photo" id="photo" accept="image/jpeg,image/png,image/jpg"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-green-500 focus:border-green-500">
+                <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG. Maks 5MB. Akan di-resize otomatis.</p>
             </div>
 
             <div class="mb-6">

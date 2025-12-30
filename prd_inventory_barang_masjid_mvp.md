@@ -1,7 +1,6 @@
 # 🕌 PRD — Inventory Barang Masjid (MVP)
 
 ## 1. Ringkasan Produk
-
 Aplikasi web sederhana untuk mencatat inventaris barang masjid:
 
 - memudahkan pendataan
@@ -9,7 +8,6 @@ Aplikasi web sederhana untuk mencatat inventaris barang masjid:
 - membuat laporan inventaris rapi
 
 Produk didesain:
-
 - ringan
 - mudah dipakai pengurus
 - mudah dipelihara
@@ -19,7 +17,6 @@ Produk didesain:
 ## 2. Tujuan
 
 ### 2.1 Masalah Saat Ini
-
 Masjid biasanya:
 
 - inventaris hanya ditulis di buku
@@ -28,10 +25,9 @@ Masjid biasanya:
 - tidak ada laporan rapi saat diminta donatur
 
 ### 2.2 Tujuan Produk
-
 ✔ Inventaris tercatat rapi  
 ✔ Mudah diakses & dicetak  
-✔ Transisi pengurus lebih aman
+✔ Transisi pengurus lebih aman  
 
 ---
 
@@ -40,7 +36,6 @@ Masjid biasanya:
 ### 3.1 Masuk (In-Scope)
 
 #### 1️⃣ Manajemen Barang
-
 Field:
 
 - Nama barang
@@ -54,7 +49,6 @@ Field:
 CRUD lengkap.
 
 #### 2️⃣ Master Data
-
 - CRUD kategori
 - CRUD lokasi
 
@@ -63,7 +57,6 @@ Dengan aturan:
 - kategori/lokasi tidak boleh dihapus jika masih dipakai item
 
 #### 3️⃣ Laporan Inventaris
-
 - list semua barang
 - filter kategori
 - filter lokasi
@@ -88,7 +81,6 @@ Semua bisa jadi roadmap berikutnya.
 ## 4. Persona Pengguna
 
 ### 👤 Pengurus Masjid
-
 - tidak selalu teknis
 - maunya cepat & sederhana
 - sering berganti periode
@@ -112,7 +104,6 @@ Tujuan utama:
 ## 6. Requirements Fungsional
 
 ### 6.1 Barang
-
 User dapat:
 
 - melihat list barang
@@ -132,7 +123,6 @@ Validasi:
 ---
 
 ### 6.2 Kategori
-
 User dapat:
 
 - lihat daftar
@@ -143,7 +133,6 @@ User dapat:
 ---
 
 ### 6.3 Lokasi
-
 User dapat:
 
 - lihat daftar
@@ -154,7 +143,6 @@ User dapat:
 ---
 
 ### 6.4 Laporan Inventaris
-
 - tabel + filter
 - tampilan print only (tanpa tombol/menu)
 
@@ -163,7 +151,6 @@ User dapat:
 ## 7. Requirements Teknis
 
 ### 7.1 Stack
-
 - **Backend:** Laravel
 - **Frontend:** Blade + Tailwind (CDN)
 - **Database:** MySQL / MariaDB
@@ -176,18 +163,17 @@ User dapat:
 
 ### 8.1 Arsitektur Kontainer
 
-| Service | Fungsi              |
-| ------- | ------------------- |
-| app     | PHP-FPM + Laravel   |
-| web     | Nginx reverse proxy |
-| db      | MariaDB             |
+| Service | Fungsi |
+|---|---|
+| app | PHP-FPM + Laravel |
+| web | Nginx reverse proxy |
+| db | MariaDB |
 
 ### 8.2 Mode Deployment
-
-| Lingkungan  | Cara                                          |
-| ----------- | --------------------------------------------- |
-| Development | Docker Compose + volume (hot reload)          |
-| Production  | Docker Compose (tanpa bind source), debug off |
+| Lingkungan | Cara |
+|---|---|
+| Development | Docker Compose + volume (hot reload) |
+| Production | Docker Compose (tanpa bind source), debug off |
 
 ---
 
@@ -235,17 +221,14 @@ DB_PASSWORD=inventory_pass
 ## 11. Database Schema
 
 ### categories
-
 - id (PK)
 - name
 
 ### locations
-
 - id (PK)
 - name
 
 ### items
-
 - id
 - name
 - category_id (FK)
@@ -263,7 +246,6 @@ Constraint:
 ---
 
 ## 12. UX Guideline
-
 Prinsip:
 
 - sederhana
@@ -281,7 +263,6 @@ Menu:
 ---
 
 ## 13. Keamanan (MVP)
-
 - DB tidak diexpose pada production
 - APP_DEBUG = false di production
 - backup manual (sementara)
@@ -333,7 +314,6 @@ V2:
 **Masalah**: Barang sering dipinjam, tapi lupa siapa yang membawa dan kapan kembali.
 
 **Fitur**:
-
 - Catat peminjaman:
   - Barang
   - Peminjam (nama + kontak opsional)
@@ -348,7 +328,6 @@ V2:
 - Tanda peringatan untuk yang lewat jatuh tempo.
 
 **DB (baru)** — `loans`:
-
 - id
 - item_id (FK)
 - borrower_name
@@ -361,7 +340,6 @@ V2:
 - notes (nullable)
 
 Rules:
-
 - tidak boleh meminjam lebih dari stok tersedia
 - jika barang kembali → stok otomatis bertambah
 
@@ -372,17 +350,14 @@ Rules:
 **Tujuan**: Mempermudah identifikasi barang.
 
 **Fitur**:
-
 - 1 foto per barang (MVP)
 - Resize otomatis (maks 1200px)
 - Kompresi ringan
 
 **DB** — tambah kolom pada `items`:
-
 - photo_path (nullable)
 
 Storage:
-
 - lokal (public/storage) — cloud opsional nanti
 
 ---
@@ -392,7 +367,6 @@ Storage:
 **Masalah**: Saat stok berubah, alasan tidak terekam.
 
 **Fitur**:
-
 - Catat perubahan stok manual:
   - jenis mutasi: `Tambah`, `Kurang`
   - jumlah
@@ -401,7 +375,6 @@ Storage:
 - Riwayat mutasi per barang
 
 **DB (baru)** — `stock_movements`:
-
 - id
 - item_id (FK)
 - type (in|out)
@@ -411,7 +384,6 @@ Storage:
 - notes (nullable)
 
 Rules:
-
 - sinkron dengan field `quantity` pada `items`
 
 ---
@@ -419,7 +391,6 @@ Rules:
 ### 2.4 Export Excel / PDF
 
 **Fitur**:
-
 - Export daftar inventaris:
   - semua data
   - bisa berdasarkan filter
@@ -436,13 +407,11 @@ Catatan: gunakan library umum (ex: maatwebsite/excel, dompdf / snappy) — detai
 **Masalah**: Data sensitif, tidak semua orang boleh mengubah.
 
 **Role (MVP):**
-
 - **Admin** — semua akses
 - **Operator** — CRUD barang & peminjaman, tidak bisa hapus item & user
 - **Viewer** — hanya lihat dan export
 
 **DB (baru)**
-
 - `users`
 - `roles`
 - pivot `role_user` (atau field role sederhana pada users — ditentukan saat implementasi)
@@ -456,7 +425,6 @@ Auth: login sederhana (email + password), tanpa SSO dulu.
 **Tujuan**: Data aman jika server rusak / human error.
 
 **Fitur**:
-
 - Backup otomatis database harian
 - Kompres (.gz)
 - Penyimpanan:
@@ -499,7 +467,6 @@ Prinsip tetap: sederhana, tidak membingungkan.
 - Tambahan dependency export
 
 Backward compatible:
-
 - data lama tetap valid
 - field baru nullable
 
@@ -519,13 +486,11 @@ Backward compatible:
 ## 7. Risiko & Mitigasi
 
 **Risiko:**
-
 - fitur terlalu banyak → pengurus bingung
 - storage membengkak karena foto & backup
 - human error saat mutasi
 
 **Mitigasi:**
-
 - UI tetap sederhana, jelaskan dengan label
 - limit ukuran foto + rotasi backup
 - konfirmasi sebelum mutasi & peminjaman
@@ -540,3 +505,125 @@ Backward compatible:
 4️⃣ Implementasi + tes
 
 ---
+
+# 🚀 PRD — Inventory Barang Masjid (V3 — Planning & Delivery)
+
+> Fokus utama V3: memastikan produk benar‑benar dipakai, prioritas jelas, desain teknis matang, dan rilis lebih stabil.
+
+---
+
+## 1️⃣ Validasi Fitur ke Pengguna (Pengurus Masjid)
+
+### Tujuan
+- Memastikan fitur yang dibuat benar‑benar digunakan.
+- Menemukan masalah usability sebelum build lebih jauh.
+
+### Aktivitas
+- Observasi langsung penggunaan aplikasi.
+- Wawancara singkat (10–15 menit per pengurus).
+- Checklist validasi per modul (inventaris, pinjam, mutasi, export, dll).
+
+### Output yang Diharapkan
+- Daftar pain point nyata pengguna.
+- Usulan perbaikan berbasis data, bukan asumsi.
+- Prioritas perbaikan UI/UX kecil.
+
+### Alat Bantu
+- Form feedback sederhana (Google Form / internal).
+- Screenshots / screen recording saat penggunaan.
+
+---
+
+## 2️⃣ Finalisasi Prioritas Rilis Bertahap
+
+### Tujuan
+Mencegah "fitur menumpuk", rilis tetap terkontrol.
+
+### Metode Prioritas
+Gunakan kerangka sederhana:
+
+- **Must Have** → langsung mempengaruhi operasional
+- **Should Have** → penting tapi bisa menunggu
+- **Nice to Have** → hanya jika ada waktu
+
+### Contoh Pembagian (Awal)
+
+**Release 3.0 (Stabilitas + Usability)**
+- perbaikan tampilan & alur yang membingungkan
+- bug fixing kritikal
+- optimasi loading tabel
+
+**Release 3.1 (Improve Existing Features)**
+- penyempurnaan peminjaman
+- penyempurnaan mutasi stok
+- penyempurnaan export
+
+**Release 3.2 (Enhancement Kecil)**
+- label, tooltip, dan bantuan pemakaian
+
+> Catatan: daftar pasti ditentukan setelah sesi validasi pengguna.
+
+---
+
+## 3️⃣ Buat Design Teknis per Modul
+
+### Tujuan
+Mengurangi risiko refactor besar karena desain terburu‑buru.
+
+### Isi Dokumen Teknis (per modul)
+1. **Tujuan Modul** — masalah yang diselesaikan
+2. **Flow Diagram** — alur data & proses
+3. **Struktur Database** — tabel, relasi, constraint
+4. **API / Controller** — endpoint & rule validasi
+5. **State & Error Handling** — bagaimana jika gagal
+6. **Permission** — siapa boleh apa
+
+### Modul Prioritas untuk Didokumentasikan
+- Peminjaman Barang
+- Mutasi Stok
+- Backup Otomatis
+- Role & Permission
+- Export
+
+Output berupa dokumen ringkas (bisa Markdown) untuk developer.
+
+---
+
+## 4️⃣ Implementasi + Tes
+
+### Strategi Implementasi
+- kerjakan modul kecil dulu
+- commit bertahap
+- hindari big‑bang release
+
+### Jenis Pengujian
+
+**1. Unit Test**
+- validasi stok tidak minus
+- validasi peminjaman tidak melebihi stok
+
+**2. Feature / Integration Test**
+- alur pinjam → kembali
+- alur mutasi → stok sinkron
+- export tidak korup
+
+**3. UAT (User Acceptance Test)**
+- pengurus mencoba langsung
+- checklist lulus/gagal
+
+### Kriteria Lulus Rilis
+- tidak ada bug kritikal
+- semua modul utama bisa dipakai dari awal sampai akhir
+- pengurus bisa mengoperasikan tanpa panduan panjang
+
+---
+
+## Ringkasan Target V3
+
+- ✔ produk benar‑benar divalidasi pengguna
+- ✔ roadmap lebih realistis & bertahap
+- ✔ desain teknis tiap modul jelas sebelum coding
+- ✔ rilis lebih stabil & minim bug
+
+---
+
