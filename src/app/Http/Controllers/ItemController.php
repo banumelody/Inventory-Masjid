@@ -8,6 +8,8 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class ItemController extends Controller
 {
@@ -34,6 +36,15 @@ class ItemController extends Controller
         return view('items.index', compact('items', 'categories', 'locations'));
     }
 
+    public function show(Item $item): View
+    {
+        $item->load(['category', 'location', 'activeLoans', 'stockMovements' => function($q) {
+            $q->orderBy('moved_at', 'desc')->limit(10);
+        }]);
+        
+        return view('items.show', compact('item'));
+    }
+
     public function create(): View
     {
         $categories = Category::orderBy('name')->get();
@@ -51,8 +62,14 @@ class ItemController extends Controller
             'unit' => 'required|string|max:50',
             'condition' => 'required|in:baik,perlu_perbaikan,rusak',
             'note' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
+        if ($request->hasFile('photo')) {
+            $validated['photo_path'] = $this->uploadPhoto($request->file('photo'));
+        }
+
+        unset($validated['photo']);
         Item::create($validated);
 
         return redirect()->route('items.index')
@@ -76,8 +93,26 @@ class ItemController extends Controller
             'unit' => 'required|string|max:50',
             'condition' => 'required|in:baik,perlu_perbaikan,rusak',
             'note' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'remove_photo' => 'nullable|boolean',
         ]);
 
+        // Handle photo removal
+        if ($request->boolean('remove_photo') && $item->photo_path) {
+            Storage::disk('public')->delete($item->photo_path);
+            $validated['photo_path'] = null;
+        }
+
+        // Handle new photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo
+            if ($item->photo_path) {
+                Storage::disk('public')->delete($item->photo_path);
+            }
+            $validated['photo_path'] = $this->uploadPhoto($request->file('photo'));
+        }
+
+        unset($validated['photo'], $validated['remove_photo']);
         $item->update($validated);
 
         return redirect()->route('items.index')
@@ -86,9 +121,59 @@ class ItemController extends Controller
 
     public function destroy(Item $item): RedirectResponse
     {
+        // Delete photo if exists
+        if ($item->photo_path) {
+            Storage::disk('public')->delete($item->photo_path);
+        }
+
         $item->delete();
 
         return redirect()->route('items.index')
             ->with('success', 'Barang berhasil dihapus.');
+    }
+
+    protected function uploadPhoto($file): string
+    {
+        $filename = 'items/' . uniqid() . '_' . time() . '.jpg';
+        
+        // Read and resize image
+        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
+        
+        // Get original dimensions
+        $origWidth = imagesx($image);
+        $origHeight = imagesy($image);
+        
+        // Calculate new dimensions (max 1200px)
+        $maxSize = 1200;
+        if ($origWidth > $maxSize || $origHeight > $maxSize) {
+            if ($origWidth > $origHeight) {
+                $newWidth = $maxSize;
+                $newHeight = (int) ($origHeight * ($maxSize / $origWidth));
+            } else {
+                $newHeight = $maxSize;
+                $newWidth = (int) ($origWidth * ($maxSize / $origHeight));
+            }
+        } else {
+            $newWidth = $origWidth;
+            $newHeight = $origHeight;
+        }
+        
+        // Create resized image
+        $resized = imagecreatetruecolor($newWidth, $newHeight);
+        imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+        
+        // Save to storage
+        $fullPath = storage_path('app/public/' . $filename);
+        $dir = dirname($fullPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        
+        imagejpeg($resized, $fullPath, 85);
+        
+        imagedestroy($image);
+        imagedestroy($resized);
+        
+        return $filename;
     }
 }

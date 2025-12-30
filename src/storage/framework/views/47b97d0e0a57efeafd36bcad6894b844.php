@@ -3,6 +3,9 @@
 <?php $__env->startSection('content'); ?>
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Laporan Inventaris</h1>
+    <a href="<?php echo e(route('export.index')); ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+        📥 Export Data
+    </a>
 </div>
 
 <!-- Filter -->

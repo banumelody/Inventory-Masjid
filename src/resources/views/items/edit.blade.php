@@ -7,7 +7,7 @@
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Barang</h1>
 
     <div class="bg-white rounded-lg shadow p-6">
-        <form action="{{ route('items.update', $item) }}" method="POST">
+        <form action="{{ route('items.update', $item) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
@@ -71,6 +71,22 @@
                         <option value="rusak" {{ old('condition', $item->condition) == 'rusak' ? 'selected' : '' }}>Rusak</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Barang</label>
+                @if($item->hasPhoto())
+                <div class="mb-3 flex items-center space-x-4">
+                    <img src="{{ $item->photo_url }}" alt="{{ $item->name }}" class="w-24 h-24 object-cover rounded">
+                    <label class="flex items-center text-sm text-gray-600">
+                        <input type="checkbox" name="remove_photo" value="1" class="mr-2">
+                        Hapus foto
+                    </label>
+                </div>
+                @endif
+                <input type="file" name="photo" id="photo" accept="image/jpeg,image/png,image/jpg"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-green-500 focus:border-green-500">
+                <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG. Maks 5MB. Kosongkan jika tidak ingin mengubah foto.</p>
             </div>
 
             <div class="mb-6">

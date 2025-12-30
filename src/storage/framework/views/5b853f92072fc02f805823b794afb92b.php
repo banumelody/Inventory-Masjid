@@ -3,9 +3,11 @@
 <?php $__env->startSection('content'); ?>
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Daftar Inventaris</h1>
+    <?php if(auth()->user()->canEditItems()): ?>
     <a href="<?php echo e(route('items.create')); ?>" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold">
         + Tambah Barang
     </a>
+    <?php endif; ?>
 </div>
 
 <!-- Filter -->
@@ -54,10 +56,11 @@
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
             <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kondisi</th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
             </tr>
@@ -66,14 +69,29 @@
             <?php $__empty_1 = true; $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900"><?php echo e($item->name); ?></div>
+                    <?php if($item->hasPhoto()): ?>
+                        <img src="<?php echo e($item->photo_url); ?>" alt="<?php echo e($item->name); ?>" class="w-12 h-12 object-cover rounded">
+                    <?php else: ?>
+                        <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                            📦
+                        </div>
+                    <?php endif; ?>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <a href="<?php echo e(route('items.show', $item)); ?>" class="text-sm font-medium text-blue-600 hover:text-blue-800"><?php echo e($item->name); ?></a>
                     <?php if($item->note): ?>
                         <div class="text-sm text-gray-500"><?php echo e(Str::limit($item->note, 50)); ?></div>
                     <?php endif; ?>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo e($item->category->name); ?></td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo e($item->location->name); ?></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo e($item->quantity); ?> <?php echo e($item->unit); ?></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="font-medium"><?php echo e($item->quantity); ?></span> <?php echo e($item->unit); ?>
+
+                    <?php if($item->borrowed_quantity > 0): ?>
+                        <span class="text-yellow-600 text-xs">(<?php echo e($item->borrowed_quantity); ?> dipinjam)</span>
+                    <?php endif; ?>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <?php if($item->condition == 'baik'): ?>
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Baik</span>
@@ -84,17 +102,28 @@
                     <?php endif; ?>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                    <a href="<?php echo e(route('items.edit', $item)); ?>" class="text-blue-600 hover:text-blue-900">Edit</a>
-                    <form action="<?php echo e(route('items.destroy', $item)); ?>" method="POST" class="inline" onsubmit="return confirm('Yakin hapus barang ini?')">
-                        <?php echo csrf_field(); ?>
-                        <?php echo method_field('DELETE'); ?>
-                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
-                    </form>
+                    <a href="<?php echo e(route('items.show', $item)); ?>" class="text-gray-600 hover:text-gray-900">Detail</a>
+                    <?php if(auth()->user()->canManageLoans() && $item->available_quantity > 0): ?>
+                        <a href="<?php echo e(route('loans.create', ['item_id' => $item->id])); ?>" class="text-yellow-600 hover:text-yellow-900">Pinjam</a>
+                    <?php endif; ?>
+                    <?php if(auth()->user()->canManageStock()): ?>
+                        <a href="<?php echo e(route('stock-movements.create', ['item_id' => $item->id])); ?>" class="text-purple-600 hover:text-purple-900">Mutasi</a>
+                    <?php endif; ?>
+                    <?php if(auth()->user()->canEditItems()): ?>
+                        <a href="<?php echo e(route('items.edit', $item)); ?>" class="text-blue-600 hover:text-blue-900">Edit</a>
+                    <?php endif; ?>
+                    <?php if(auth()->user()->canDeleteItems()): ?>
+                        <form action="<?php echo e(route('items.destroy', $item)); ?>" method="POST" class="inline" onsubmit="return confirm('Yakin hapus barang ini?')">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
+                        </form>
+                    <?php endif; ?>
                 </td>
             </tr>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
             <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">Belum ada barang.</td>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">Belum ada barang.</td>
             </tr>
             <?php endif; ?>
         </tbody>

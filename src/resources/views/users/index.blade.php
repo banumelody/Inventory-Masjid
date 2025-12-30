@@ -1,0 +1,63 @@
+@extends('layouts.app')
+
+@section('title', 'Pengguna - Inventory Masjid')
+
+@section('content')
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Daftar Pengguna</h1>
+    <a href="{{ route('users.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold">
+        + Tambah Pengguna
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            @forelse($users as $user)
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ $user->name }}
+                    @if($user->id === auth()->id())
+                        <span class="text-xs text-gray-500">(Anda)</span>
+                    @endif
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                        {{ $user->role->name === 'admin' ? 'bg-red-100 text-red-800' : 
+                           ($user->role->name === 'operator' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
+                        {{ $user->role->display_name }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                    <a href="{{ route('users.edit', $user) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                    @if($user->id !== auth()->id())
+                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus pengguna ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
+                    </form>
+                    @endif
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Belum ada pengguna.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    {{ $users->links() }}
+</div>
+@endsection

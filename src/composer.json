@@ -4,6 +4,7 @@
     "description": "Inventory Barang Masjid MVP",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^10.0"
     },
     "require-dev": {
