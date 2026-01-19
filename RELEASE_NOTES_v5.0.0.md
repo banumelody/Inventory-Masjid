@@ -13,6 +13,7 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 ## ✨ Major Features
 
 ### QR Code Label Printing
+
 - **Generate QR codes** untuk setiap barang secara otomatis
 - **Cetak label QR individual** dengan size options:
   - Small (60×35mm) - untuk barang kecil
@@ -22,6 +23,7 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 - Compatible dengan printer thermal maupun inkjet
 
 ### Audit Scan System
+
 - **Scan QR codes** dengan kamera smartphone/webcam
 - **Pilihan purpose/tujuan scan:**
   - Audit (audit reguler)
@@ -34,6 +36,7 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 - Real-time feedback saat scan berhasil
 
 ### Scan Logs Dashboard
+
 - **Admin dashboard** untuk monitoring semua scan activities
 - **Advanced filtering:**
   - Filter by tanggal (date range)
@@ -45,6 +48,7 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 - **Search functionality** untuk pencarian cepat
 
 ### Application Settings (Admin UI)
+
 - **Dynamic app name** - ubah nama aplikasi tanpa restart
 - **Logo & Favicon upload** - branding aplikasi
 - **Organization information:**
@@ -58,6 +62,7 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 - **Database-based configuration** - semua setting tersimpan di DB (tidak perlu edit .env)
 
 ### Version Information System
+
 - **Display app version** di Settings page
 - **Version history** - informasi perubahan tiap versi
 - **Features changelog** - list fitur yang ditambahkan
@@ -83,18 +88,21 @@ This is a major release featuring a complete QR Code labeling and scanning syste
 ## 🔧 Technical Changes
 
 ### Database Changes
+
 - **New column** `purpose` di tabel `scan_logs` untuk tracking tujuan scan
 - **New table** `settings` untuk menyimpan konfigurasi aplikasi
 - Migration files untuk database updates
 - Seeder untuk initial configuration
 
 ### Code Changes
+
 - **Setting Model** dengan caching untuk performa optimal
 - **Version Config** file (`config/version.php`) untuk centralized version management
 - Refactored layout templates untuk dynamic branding
 - Enhanced admin controllers
 
 ### Dependencies & Requirements
+
 - Laravel 10
 - PHP 8.1+
 - MariaDB 10.11
@@ -131,11 +139,14 @@ docker-compose exec app php artisan storage:link
 ```
 
 ### Default Login
+
 - **Email:** admin@masjid.local
 - **Password:** password
 
 ### Port Configuration
+
 Edit `.env` file:
+
 ```env
 APP_PORT=8085        # Web application port
 DB_HOST_PORT=3308    # Database port
@@ -146,12 +157,14 @@ DB_HOST_PORT=3308    # Database port
 ## 📋 Complete Feature List (All Versions)
 
 ### MVP - Manajemen Barang
+
 - ✅ CRUD barang dengan foto
 - ✅ Filter & pencarian
 - ✅ Master kategori & lokasi
 - ✅ Laporan print-friendly
 
 ### V2 - Extended Features
+
 - ✅ Peminjaman barang dengan tracking
 - ✅ Mutasi stok dengan history
 - ✅ Export Excel (CSV) & PDF
@@ -159,6 +172,7 @@ DB_HOST_PORT=3308    # Database port
 - ✅ Backup otomatis harian
 
 ### V3 - Stability & Usability
+
 - ✅ Dashboard overview
 - ✅ Warning peminjaman terlambat
 - ✅ Feedback system
@@ -166,6 +180,7 @@ DB_HOST_PORT=3308    # Database port
 - ✅ Unit & Feature tests
 
 ### V4 - Responsive UI 📱
+
 - ✅ Responsive layout (Desktop, Tablet, Mobile)
 - ✅ Hamburger menu untuk layar kecil
 - ✅ Card view di mobile
@@ -175,6 +190,7 @@ DB_HOST_PORT=3308    # Database port
 - ✅ Pagination
 
 ### V5 - QR Code Label & Scan 🏷️ [LATEST]
+
 - ✅ Generate & print QR labels
 - ✅ Bulk print QR codes
 - ✅ Scan QR dengan audit trail
@@ -206,6 +222,7 @@ docker-compose exec app php artisan test --coverage
 ## 📚 Documentation
 
 Technical documentation tersedia di `/docs`:
+
 - [Overview](https://github.com/banumelody/Inventory-Masjid/blob/main/docs/README.md)
 - [Loans Module](https://github.com/banumelody/Inventory-Masjid/blob/main/docs/module-loans.md)
 - [Stock Movements Module](https://github.com/banumelody/Inventory-Masjid/blob/main/docs/module-stock-movements.md)
@@ -231,6 +248,7 @@ Project ini menggunakan lisensi MIT. Lihat [LICENSE](https://github.com/banumelo
 ## 🙏 Acknowledgments
 
 Terima kasih kepada semua yang telah berkontribusi pada project ini, khususnya:
+
 - Tim development yang telah mengimplementasikan fitur
 - Community yang memberikan feedback
 - Pengguna yang telah menggunakan aplikasi ini
