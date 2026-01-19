@@ -98,7 +98,7 @@
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto sidebar-nav">
+                <nav class="flex-1 px-3 py-4 pb-20 space-y-6 overflow-y-auto sidebar-nav">
                 <!-- Main Menu -->
                 <div>
                     <p class="sidebar-group-title">Menu Utama</p>
@@ -233,26 +233,26 @@
                     </div>
                 </div>
                 </nav>
-
-                <!-- User Info -->
-                <div class="p-3 border-t border-gray-100 bg-white flex-shrink-0">
-                    <div class="flex items-center gap-3 px-2">
-                        <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-700 truncate">{{ auth()->user()->name }}</p>
-                            <p class="text-xs text-gray-500">{{ auth()->user()->role->display_name }}</p>
-                        </div>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50" title="Logout">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                </svg>
-                            </button>
-                        </form>
+            </div>
+            
+            <!-- User Info (Floating at bottom) -->
+            <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div class="flex items-center gap-3 px-2">
+                    <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-700 truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-gray-500">{{ auth()->user()->role->display_name }}</p>
+                    </div>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50" title="Logout">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>

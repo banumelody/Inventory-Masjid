@@ -136,6 +136,6 @@ Rilis major dengan fitur QR Code lengkap dan sistem pengaturan aplikasi via admi
 
 ## Links
 
-- [Repository](https://github.com/your-repo/inventory-masjid)
+- [Repository](https://github.com/banumelody/Inventory-Masjid)
 - [Documentation](./docs/README.md)
-- [Issue Tracker](https://github.com/your-repo/inventory-masjid/issues)
+- [Issue Tracker](https://github.com/banumelody/Inventory-Masjid/issues)

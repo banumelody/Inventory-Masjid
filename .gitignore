@@ -1,29 +1,49 @@
-# Laravel specific
-/vendor/
-/node_modules/
-/public/hot
-/public/storage
-/storage/*.key
-/storage/app/*
-!/storage/app/.gitignore
-/storage/framework/cache/*
-!/storage/framework/cache/.gitignore
-/storage/framework/sessions/*
-!/storage/framework/sessions/.gitignore
-/storage/framework/testing/*
-!/storage/framework/testing/.gitignore
-/storage/framework/views/*
-!/storage/framework/views/.gitignore
-/storage/logs/*
-!/storage/logs/.gitignore
+# ===========================================
+# Inventory Masjid - .gitignore
+# ===========================================
 
-# Environment files
+# ----- Laravel (src/) -----
+src/vendor/
+src/node_modules/
+src/public/hot
+src/public/storage
+src/storage/*.key
+src/storage/app/*
+!src/storage/app/.gitignore
+src/storage/framework/cache/*
+!src/storage/framework/cache/.gitignore
+src/storage/framework/sessions/*
+!src/storage/framework/sessions/.gitignore
+src/storage/framework/testing/*
+!src/storage/framework/testing/.gitignore
+src/storage/framework/views/*
+!src/storage/framework/views/.gitignore
+src/storage/logs/*
+!src/storage/logs/.gitignore
+src/bootstrap/cache/*
+!src/bootstrap/cache/.gitignore
+
+# ----- Environment files -----
 .env
-.env.backup
-.env.production
-.phpunit.result.cache
+src/.env
+src/.env.backup
+src/.env.production
+src/.env.local
+src/.env.*.local
+# Keep example
+!src/.env.example
 
-# IDE and editor files
+# ----- Composer lock (optional - some prefer to commit) -----
+src/composer.lock
+
+# ----- Testing -----
+src/.phpunit.result.cache
+src/.phpunit.cache
+src/phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
+
+# ----- IDE and editor files -----
 .idea/
 .vscode/
 *.swp
@@ -31,34 +51,37 @@
 *~
 .DS_Store
 Thumbs.db
+*.sublime-project
+*.sublime-workspace
 
-# Composer
+# ----- PHP -----
+*.log
 composer.phar
-composer.lock
 
-# NPM/Yarn
+# ----- NPM/Yarn -----
 npm-debug.log
 yarn-error.log
-package-lock.json
-yarn.lock
 
-# Laravel Mix
-/public/css/
-/public/js/
-/public/mix-manifest.json
+# ----- Laravel Mix/Vite -----
+src/public/build/
+src/public/hot/
+src/public/css/
+src/public/js/
+src/public/mix-manifest.json
 
-# PHP
-*.log
-
-# Testing
-.phpunit.cache
-phpunit.xml
-
-# Docker
+# ----- Docker -----
 docker-compose.override.yml
 
-# Backup files
+# ----- Backup files -----
 *.bak
 *.backup
 *.sql
+*.gz
 *.sqlite
+
+# ----- Misc -----
+*.cache
+*.tmp
+.sass-cache/
+coverage/
+.nyc_output/

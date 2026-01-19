@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'changelog_url' => 'https://github.com/your-repo/inventory-masjid/blob/main/CHANGELOG.md',
+    'changelog_url' => 'https://github.com/banumelody/Inventory-Masjid/blob/main/CHANGELOG.md',
 
     /*
     |--------------------------------------------------------------------------
