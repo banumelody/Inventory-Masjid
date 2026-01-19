@@ -13,11 +13,44 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\HelpController;
+use App\Http\Controllers\ScanLogController;
+use App\Http\Controllers\SettingController;
+
+// Welcome page for guests
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('welcome.index');
+})->name('home');
+
+// Public Help & Documentation (accessible without login)
+Route::get('/help/faq', [HelpController::class, 'faq'])->name('help.faq');
+Route::get('/help/guide', [HelpController::class, 'guide'])->name('help.guide');
+
+// Public QR scan redirect (accessible without login for easy scanning)
+Route::get('/i/{qrKey}', [QrCodeController::class, 'handleScan'])->name('qrcode.redirect');
+
+// Public loan return scan redirect
+Route::get('/loans/return-scan/{qrKey}', [LoanController::class, 'handleScanReturn'])->name('loans.scan-return.handle');
 
 // Auth routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // Password Reset Routes
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -25,7 +58,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 // Protected routes
 Route::middleware('auth')->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // QR Code Scanner (all authenticated users)
+    Route::get('/scan', [QrCodeController::class, 'scanPage'])->name('qrcode.scan');
 
     // Items - All roles can view
     Route::get('/items', [ItemController::class, 'index'])->name('items.index');
@@ -36,6 +72,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/items', [ItemController::class, 'store'])->name('items.store');
         Route::get('/items/{item}/edit', [ItemController::class, 'edit'])->name('items.edit');
         Route::put('/items/{item}', [ItemController::class, 'update'])->name('items.update');
+        
+        // QR Code management
+        Route::post('/items/{item}/qr/generate', [QrCodeController::class, 'generate'])->name('qrcode.generate');
+        Route::get('/items/{item}/qr/preview', [QrCodeController::class, 'preview'])->name('qrcode.preview');
+        Route::get('/items/{item}/qr/print', [QrCodeController::class, 'printSingle'])->name('qrcode.print');
+        Route::get('/items/{item}/qr.svg', [QrCodeController::class, 'qrSvg'])->name('qrcode.svg');
+        Route::get('/qr/bulk', [QrCodeController::class, 'bulkForm'])->name('qrcode.bulk');
+        Route::post('/qr/bulk/print', [QrCodeController::class, 'bulkPrint'])->name('qrcode.bulk.print');
     });
     
     // Items - Show (after /create to avoid conflict)
@@ -65,11 +109,16 @@ Route::middleware('auth')->group(function () {
     // Loans - Admin & Operator can manage
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
     Route::middleware('role:admin,operator')->group(function () {
+        Route::get('/loans/scan-return', [LoanController::class, 'scanReturnPage'])->name('loans.scan-return');
         Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
         Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
         Route::get('/loans/{loan}', [LoanController::class, 'show'])->name('loans.show');
         Route::get('/loans/{loan}/return', [LoanController::class, 'returnForm'])->name('loans.return');
         Route::post('/loans/{loan}/return', [LoanController::class, 'returnItem'])->name('loans.return.store');
+        Route::post('/loans/{loan}/qr/generate', [LoanController::class, 'generateReturnQr'])->name('loans.qr.generate');
+        Route::get('/loans/{loan}/qr.svg', [LoanController::class, 'returnQrSvg'])->name('loans.qr.svg');
+        Route::get('/loans/{loan}/qr/print', [LoanController::class, 'printReturnQr'])->name('loans.qr.print');
+        Route::post('/loans/quick-return/{qrKey}', [LoanController::class, 'quickReturn'])->name('loans.quick-return');
         Route::delete('/loans/{loan}', [LoanController::class, 'destroy'])->name('loans.destroy');
     });
 
@@ -109,4 +158,60 @@ Route::middleware('auth')->group(function () {
         Route::get('/backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
         Route::delete('/backups/{backup}', [BackupController::class, 'destroy'])->name('backups.destroy');
     });
+
+    // Maintenances - Admin & Operator can manage
+    Route::get('/maintenances', [MaintenanceController::class, 'index'])->name('maintenances.index');
+    Route::middleware('role:admin,operator')->group(function () {
+        Route::get('/maintenances/create', [MaintenanceController::class, 'create'])->name('maintenances.create');
+        Route::post('/maintenances', [MaintenanceController::class, 'store'])->name('maintenances.store');
+        Route::get('/maintenances/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenances.show');
+        Route::get('/maintenances/{maintenance}/edit', [MaintenanceController::class, 'edit'])->name('maintenances.edit');
+        Route::put('/maintenances/{maintenance}', [MaintenanceController::class, 'update'])->name('maintenances.update');
+        Route::patch('/maintenances/{maintenance}/status', [MaintenanceController::class, 'updateStatus'])->name('maintenances.status');
+        Route::delete('/maintenances/{maintenance}', [MaintenanceController::class, 'destroy'])->name('maintenances.destroy');
+        Route::get('/items/{item}/maintenances', [MaintenanceController::class, 'itemHistory'])->name('maintenances.item');
+        
+        // Maintenance Photos
+        Route::post('/maintenances/{maintenance}/photos', [MaintenanceController::class, 'uploadPhoto'])->name('maintenances.photos.upload');
+        Route::put('/maintenance-photos/{photo}', [MaintenanceController::class, 'updatePhoto'])->name('maintenances.photos.update');
+        Route::delete('/maintenance-photos/{photo}', [MaintenanceController::class, 'deletePhoto'])->name('maintenances.photos.delete');
+    });
+
+    // Import - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/imports', [ImportController::class, 'index'])->name('imports.index');
+        Route::get('/imports/create', [ImportController::class, 'create'])->name('imports.create');
+        Route::post('/imports/preview', [ImportController::class, 'preview'])->name('imports.preview');
+        Route::post('/imports/process', [ImportController::class, 'process'])->name('imports.process');
+        Route::get('/imports/template/{type}', [ImportController::class, 'template'])->name('imports.template');
+        Route::get('/imports/{import}', [ImportController::class, 'show'])->name('imports.show');
+    });
+
+    // Activity Logs - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+    });
+
+    // Scan Logs - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/scan-logs', [ScanLogController::class, 'index'])->name('scan-logs.index');
+        Route::get('/scan-logs/export', [ScanLogController::class, 'export'])->name('scan-logs.export');
+        Route::get('/scan-logs/{scanLog}', [ScanLogController::class, 'show'])->name('scan-logs.show');
+    });
+
+    // Audit Scan - Admin & Operator
+    Route::middleware('role:admin,operator')->group(function () {
+        Route::get('/scan/audit', [QrCodeController::class, 'auditScanPage'])->name('qrcode.audit-scan');
+        Route::post('/i/{qrKey}/audit', [QrCodeController::class, 'handleScanWithPurpose'])->name('qrcode.scan-with-purpose');
+    });
+
+    // Settings - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    });
+
+    // About page - All authenticated users
+    Route::get('/about', [SettingController::class, 'about'])->name('about');
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Location;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -29,7 +30,7 @@ class ItemController extends Controller
             $query->where('location_id', $request->location_id);
         }
 
-        $items = $query->orderBy('name')->paginate(15)->withQueryString();
+        $items = $query->orderBy('name')->paginate(10)->withQueryString();
         $categories = Category::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
 
@@ -40,6 +41,8 @@ class ItemController extends Controller
     {
         $item->load(['category', 'location', 'activeLoans', 'stockMovements' => function($q) {
             $q->orderBy('moved_at', 'desc')->limit(10);
+        }, 'activeMaintenances', 'scanLogs' => function($q) {
+            $q->with('user')->orderBy('scanned_at', 'desc')->limit(10);
         }]);
         
         return view('items.show', compact('item'));
@@ -70,7 +73,16 @@ class ItemController extends Controller
         }
 
         unset($validated['photo']);
-        Item::create($validated);
+        $item = Item::create($validated);
+
+        // Log activity
+        ActivityLog::log('create', "Menambahkan barang: {$item->name}", $item, null, $validated);
+
+        // Handle "Simpan & Tambah Lagi"
+        if ($request->input('action') === 'save_and_new') {
+            return redirect()->route('items.create')
+                ->with('success', 'Barang berhasil ditambahkan. Silakan tambah lagi.');
+        }
 
         return redirect()->route('items.index')
             ->with('success', 'Barang berhasil ditambahkan.');
@@ -97,6 +109,8 @@ class ItemController extends Controller
             'remove_photo' => 'nullable|boolean',
         ]);
 
+        $oldValues = $item->toArray();
+
         // Handle photo removal
         if ($request->boolean('remove_photo') && $item->photo_path) {
             Storage::disk('public')->delete($item->photo_path);
@@ -115,18 +129,27 @@ class ItemController extends Controller
         unset($validated['photo'], $validated['remove_photo']);
         $item->update($validated);
 
+        // Log activity
+        ActivityLog::log('update', "Mengupdate barang: {$item->name}", $item, $oldValues, $validated);
+
         return redirect()->route('items.index')
             ->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroy(Item $item): RedirectResponse
     {
+        $itemName = $item->name;
+        $oldValues = $item->toArray();
+
         // Delete photo if exists
         if ($item->photo_path) {
             Storage::disk('public')->delete($item->photo_path);
         }
 
         $item->delete();
+
+        // Log activity
+        ActivityLog::log('delete', "Menghapus barang: {$itemName}", null, $oldValues, null);
 
         return redirect()->route('items.index')
             ->with('success', 'Barang berhasil dihapus.');

@@ -17,6 +17,7 @@ class Item extends Model
         'condition',
         'note',
         'photo_path',
+        'qr_code_key',
     ];
 
     public function category(): BelongsTo
@@ -42,6 +43,16 @@ class Item extends Model
     public function activeLoans(): HasMany
     {
         return $this->hasMany(Loan::class)->whereNull('returned_at');
+    }
+
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(Maintenance::class);
+    }
+
+    public function activeMaintenances(): HasMany
+    {
+        return $this->hasMany(Maintenance::class)->whereIn('status', ['pending', 'in_progress']);
     }
 
     public function getConditionLabelAttribute(): string
@@ -75,5 +86,40 @@ class Item extends Model
             return null;
         }
         return asset('storage/' . $this->photo_path);
+    }
+
+    public function scanLogs(): HasMany
+    {
+        return $this->hasMany(ScanLog::class);
+    }
+
+    public function hasQrCode(): bool
+    {
+        return !empty($this->qr_code_key);
+    }
+
+    public function generateQrCodeKey(): string
+    {
+        $this->qr_code_key = bin2hex(random_bytes(12));
+        $this->save();
+        return $this->qr_code_key;
+    }
+
+    public function getQrCodeUrlAttribute(): ?string
+    {
+        if (!$this->hasQrCode()) {
+            return null;
+        }
+        return url('/i/' . $this->qr_code_key);
+    }
+
+    public function hasActiveMaintenance(): bool
+    {
+        return $this->activeMaintenances()->exists();
+    }
+
+    public function getActiveMaintenanceCountAttribute(): int
+    {
+        return $this->activeMaintenances()->count();
     }
 }

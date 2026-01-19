@@ -627,3 +627,159 @@ Output berupa dokumen ringkas (bisa Markdown) untuk developer.
 
 ---
 
+# 📱 PRD — Inventory Barang Masjid (V4 — Responsive UI)
+
+> Fokus versi ini: membuat UI **responsif dan konsisten** di semua ukuran layar (mobile, tablet, desktop) — tanpa memaksa pola mobile‑first dan tanpa mengubah alur kerja yang sudah familiar.
+
+---
+
+## 1️⃣ Latar Belakang
+
+Aplikasi mulai dipakai oleh:
+- pengurus yang memakai HP,
+- sebagian masih memakai laptop/PC,
+- beberapa memakai tablet.
+
+Masalah yang muncul:
+- tabel pecah saat layar kecil
+- perlu scroll horizontal
+- tombol dan teks terlalu kecil di HP
+- tampilan tidak efisien saat di desktop besar
+
+Target V4: **satu kode, tampilan adaptif** sesuai device.
+
+---
+
+## 2️⃣ Tujuan Utama
+
+✔ tampilan nyaman digunakan di berbagai ukuran layar  
+✔ informasi tetap jelas tanpa kehilangan konteks  
+✔ interaksi mudah di HP, tetap efektif di desktop  
+✔ performa tetap ringan
+
+---
+
+## 3️⃣ Scope (In‑Scope)
+
+### 3.1 Responsive Layout
+
+**Prinsip:**
+- fluid layout + breakpoints
+- konten beradaptasi, alur tetap sama
+
+**Aturan tampilan:**
+- **Desktop (≥ 1024px)** — tabel lengkap + aksi jelas
+- **Tablet (768–1023px)** — beberapa kolom disederhanakan
+- **Mobile (≤ 767px)** — card list sederhana dengan aksi utama di dalam card
+
+---
+
+### 3.2 Navigasi yang Adaptif
+
+- Desktop → top navigation (tetap)
+- Tablet/Mobile → hamburger / collapsible menu
+
+Catatan: bottom navigation TIDAK digunakan kecuali terbukti diperlukan dari hasil uji pengguna.
+
+---
+
+### 3.3 Form yang Nyaman di Semua Device
+
+- susunan field satu kolom saat layar kecil
+- label jelas + helper text singkat
+- tombol besar & mudah dijangkau
+- auto scroll ke error jika validasi gagal
+
+Tambahan:
+- opsi **Simpan & Tambah Lagi** untuk input berulang.
+
+---
+
+### 3.4 Optimasi Performa untuk Layar Kecil
+
+- pagination default 10 item
+- lazy‑load gambar
+- kompresi foto otomatis
+- hindari script berat yang tidak perlu
+
+---
+
+### 3.5 Aksesibilitas Ringan
+
+- kontras warna mencukupi
+- ukuran font minimum 14px
+- area klik tombol memadai
+
+---
+
+## 4️⃣ Out of Scope (V4)
+
+❌ aplikasi native  
+❌ PWA full offline  
+❌ perubahan arsitektur besar  
+❌ redesign total visual/brand
+
+Fokus: **membuat UI yang ada jadi responsif & usable.**
+
+---
+
+## 5️⃣ Dampak ke Modul
+
+### Inventaris
+- tabel → card di mobile
+- shortcut aksi: detail, pinjam, mutasi
+
+### Peminjaman
+- timeline card di layar kecil
+
+### Mutasi Stok
+- ikon & label lebih jelas
+
+### Export
+- pindahkan ke overflow menu pada layar kecil
+
+---
+
+## 6️⃣ Requirements Teknis
+
+- Tailwind responsive utilities (sm/md/lg/xl)
+- komponen reusable
+- testing pada:
+  - 360×640 (HP kecil)
+  - 412×915 (HP menengah)
+  - 768×1024 (tablet)
+  - 1366×768+ (desktop)
+
+---
+
+## 7️⃣ Acceptance Criteria
+
+- tidak ada horizontal scroll di layar kecil
+- elemen tidak tumpang tindih
+- aksi utama mudah diakses
+- informasi utama (nama, stok, lokasi) selalu terlihat
+- performa tetap stabil
+
+---
+
+## 8️⃣ Risiko & Mitigasi
+
+**Risiko:**
+- beberapa informasi tersembunyi di mobile
+- kompleksitas CSS meningkat
+
+**Mitigasi:**
+- tombol "Lihat detail" jelas
+- dokumentasi kelas & komponen
+
+---
+
+## 9️⃣ Next Step
+
+1️⃣ buat wireframe responsif  
+2️⃣ review dengan 2–3 pengguna  
+3️⃣ implementasi bertahap per halaman  
+4️⃣ regression test desktop & mobile
+
+---
+

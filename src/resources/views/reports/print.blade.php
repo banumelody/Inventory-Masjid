@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Inventaris - Inventory Masjid</title>
+    <title>Laporan Inventaris - {{ \App\Models\Setting::appName() }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -26,7 +26,13 @@
     </div>
 
     <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold">🕌 LAPORAN INVENTARIS MASJID</h1>
+        @if(\App\Models\Setting::hasLogo())
+            <img src="{{ \App\Models\Setting::logoUrl() }}" alt="{{ \App\Models\Setting::appName() }}" class="h-12 mx-auto mb-2">
+        @else
+            <span class="text-4xl">🕌</span>
+        @endif
+        <h1 class="text-2xl font-bold">LAPORAN INVENTARIS</h1>
+        <h2 class="text-lg font-semibold text-gray-700">{{ \App\Models\Setting::orgName() ?: \App\Models\Setting::appName() }}</h2>
         <p class="text-gray-600 mt-2">Tanggal: {{ now()->format('d/m/Y') }}</p>
         <p class="text-gray-600">Kategori: {{ $categoryName }} | Lokasi: {{ $locationName }}</p>
     </div>

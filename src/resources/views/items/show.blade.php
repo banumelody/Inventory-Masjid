@@ -117,7 +117,7 @@
 
         <!-- Recent Stock Movements -->
         @if($item->stockMovements->count() > 0)
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold">Mutasi Stok Terbaru</h2>
                 <a href="{{ route('stock-movements.item', $item) }}" class="text-blue-600 hover:text-blue-800 text-sm">Lihat Semua</a>
@@ -137,20 +137,90 @@
             </div>
         </div>
         @endif
+
+        <!-- Recent Scans -->
+        @if($item->scanLogs->count() > 0)
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold">📷 Riwayat Scan Terbaru</h2>
+                @if(auth()->user()->isAdmin())
+                <a href="{{ route('scan-logs.index', ['item_id' => $item->id]) }}" class="text-blue-600 hover:text-blue-800 text-sm">Lihat Semua</a>
+                @endif
+            </div>
+            <div class="space-y-2">
+                @foreach($item->scanLogs->take(5) as $scan)
+                <div class="flex justify-between items-center py-2 border-b last:border-0">
+                    <div>
+                        <span class="text-sm text-gray-700">{{ $scan->user->name ?? 'Guest' }}</span>
+                        @if($scan->purpose)
+                            <span class="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{{ $scan->purpose_label }}</span>
+                        @endif
+                    </div>
+                    <span class="text-sm text-gray-400">{{ $scan->scanned_at->format('d/m/Y H:i') }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
     </div>
 
-    <!-- Sidebar - Photo -->
-    <div>
+    <!-- Sidebar - Photo & QR Code -->
+    <div class="space-y-6">
+        <!-- Photo -->
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold mb-4">Foto Barang</h2>
             @if($item->hasPhoto())
                 <img src="{{ $item->photo_url }}" alt="{{ $item->name }}" class="w-full rounded-lg">
             @else
-                <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
                     <div class="text-center">
-                        <span class="text-6xl">📦</span>
-                        <p class="mt-2">Tidak ada foto</p>
+                        <span class="text-4xl">📦</span>
+                        <p class="mt-2 text-sm">Tidak ada foto</p>
                     </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- QR Code -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">🏷️ QR Code</h2>
+            @if($item->hasQrCode())
+                <div class="text-center">
+                    <div class="inline-block p-3 bg-white border border-gray-200 rounded-lg mb-3">
+                        {!! QrCode::size(150)->errorCorrection('H')->generate($item->qr_code_url) !!}
+                    </div>
+                    <p class="text-xs text-gray-500 font-mono mb-4">{{ $item->qr_code_key }}</p>
+                    
+                    @if(auth()->user()->canEditItems())
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('qrcode.preview', $item) }}" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm text-center">
+                            👁️ Preview
+                        </a>
+                        <a href="{{ route('qrcode.print', $item) }}" 
+                           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm text-center">
+                            🖨️ Cetak Label
+                        </a>
+                    </div>
+                    @endif
+                </div>
+            @else
+                <div class="text-center">
+                    <div class="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 mb-4">
+                        <div class="text-center">
+                            <span class="text-4xl">📷</span>
+                            <p class="mt-2 text-sm">Belum ada QR Code</p>
+                        </div>
+                    </div>
+                    
+                    @if(auth()->user()->canEditItems())
+                    <form action="{{ route('qrcode.generate', $item) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                            ✨ Generate QR Code
+                        </button>
+                    </form>
+                    @endif
                 </div>
             @endif
         </div>

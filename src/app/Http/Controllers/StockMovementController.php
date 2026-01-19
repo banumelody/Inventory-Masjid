@@ -25,7 +25,7 @@ class StockMovementController extends Controller
 
         $movements = $query->orderBy('moved_at', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate(20)
+            ->paginate(10)
             ->withQueryString();
 
         $items = Item::orderBy('name')->get();
@@ -85,7 +85,7 @@ class StockMovementController extends Controller
         $movements = $item->stockMovements()
             ->orderBy('moved_at', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10);
 
         return view('stock-movements.item-history', compact('item', 'movements'));
     }

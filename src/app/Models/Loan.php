@@ -17,6 +17,7 @@ class Loan extends Model
         'returned_at',
         'returned_condition',
         'notes',
+        'return_qr_key',
     ];
 
     protected $casts = [
@@ -63,5 +64,34 @@ class Loan extends Model
             return 'red';
         }
         return 'yellow';
+    }
+
+    /**
+     * Check if loan has QR code for return
+     */
+    public function hasReturnQrCode(): bool
+    {
+        return !empty($this->return_qr_key);
+    }
+
+    /**
+     * Generate QR code key for return
+     */
+    public function generateReturnQrKey(): string
+    {
+        $this->return_qr_key = bin2hex(random_bytes(12));
+        $this->save();
+        return $this->return_qr_key;
+    }
+
+    /**
+     * Get return QR code URL
+     */
+    public function getReturnQrUrlAttribute(): ?string
+    {
+        if (!$this->hasReturnQrCode()) {
+            return null;
+        }
+        return url('/loans/return-scan/' . $this->return_qr_key);
     }
 }

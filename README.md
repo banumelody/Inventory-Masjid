@@ -1,6 +1,6 @@
-# 🕌 Inventory Barang Masjid V3
+# 🕌 Inventory Barang Masjid V5
 
-Aplikasi web untuk mencatat inventaris barang masjid dengan fitur lengkap.
+Aplikasi web untuk mencatat inventaris barang masjid dengan fitur lengkap, **tampilan responsif**, dan **QR Code labeling**.
 
 ## Requirements
 
@@ -69,6 +69,27 @@ DB_HOST_PORT=3308  # Port database (default: 3307)
 - ✅ Technical documentation
 - ✅ Unit & Feature tests
 
+### V4 - Responsive UI 📱
+- ✅ **Responsive layout** - Desktop, Tablet, Mobile
+- ✅ **Hamburger menu** untuk layar kecil
+- ✅ **Card view** di mobile (tabel di desktop)
+- ✅ **Tombol besar** (touch-friendly)
+- ✅ **Simpan & Tambah Lagi** untuk input cepat
+- ✅ **Form draft** (localStorage)
+- ✅ **Lazy load gambar**
+- ✅ **Pagination 10 item** default
+- ✅ **Auto scroll ke error**
+
+### V5 - QR Code Label & Scan 🏷️
+- ✅ **Generate QR** untuk setiap barang
+- ✅ **Cetak label** ukuran kecil/sedang
+- ✅ **Cetak massal** multiple barang
+- ✅ **Scan QR** dengan kamera HP
+- ✅ **Audit Scan** dengan tujuan & catatan
+- ✅ **Scan Logs** riwayat scan (admin)
+- ✅ **Export scan logs** ke CSV
+- ✅ **Manual input** fallback jika kamera gagal
+
 ## Menu Aplikasi
 
 | Menu | Fungsi |
@@ -80,9 +101,12 @@ DB_HOST_PORT=3308  # Port database (default: 3307)
 | Kategori | Master kategori |
 | Lokasi | Master lokasi |
 | Laporan | Laporan + export |
+| 📷 Scan QR | Scan QR barang |
+| 📋 Audit Scan | Scan untuk audit/pengecekan |
 | User | Kelola pengguna (Admin) |
 | Backup | Kelola backup (Admin) |
-| 💬 | Feedback (Admin) |
+| Scan Logs | Riwayat scan QR (Admin) |
+| 💬 Feedback | Kelola feedback (Admin) |
 
 ## Role & Permission
 
@@ -96,6 +120,10 @@ DB_HOST_PORT=3308  # Port database (default: 3307)
 | Export data | ✅ | ✅ | ✅ |
 | Manage users | ✅ | ❌ | ❌ |
 | Manage backups | ✅ | ❌ | ❌ |
+| Scan QR | ✅ | ✅ | ✅ |
+| Audit scan | ✅ | ✅ | ❌ |
+| Generate/Print QR | ✅ | ✅ | ❌ |
+| View scan logs | ✅ | ❌ | ❌ |
 
 ## Tech Stack
 
@@ -128,6 +156,7 @@ Technical documentation tersedia di folder `/docs`:
 - [Users Module](docs/module-users.md)
 - [Backup Module](docs/module-backup.md)
 - [Export Module](docs/module-export.md)
+- [QR Code Module](docs/module-qrcode.md) ✨ **V5**
 
 ## Scheduler (Backup Otomatis)
 

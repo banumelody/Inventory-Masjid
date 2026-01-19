@@ -7,6 +7,7 @@
 3. [User & Role](./module-users.md)
 4. [Backup](./module-backup.md)
 5. [Export](./module-export.md)
+6. [QR Code & Scan](./module-qrcode.md) ✨ **V5**
 
 ---
 
@@ -44,24 +45,25 @@
 │ condition                       │     └─────────────┘
 │ note                            │
 │ photo_path                      │
+│ qr_code_key ✨                  │
 │ timestamps                      │
 └───────────┬─────────────────────┘
             │
-    ┌───────┴───────┐
-    │               │
-    ▼               ▼
-┌─────────────┐  ┌─────────────────┐
-│   loans     │  │ stock_movements │
-├─────────────┤  ├─────────────────┤
-│ id          │  │ id              │
-│ item_id(FK) │  │ item_id (FK)    │
-│ borrower_*  │  │ type (in/out)   │
-│ quantity    │  │ quantity        │
-│ borrowed_at │  │ reason          │
-│ due_at      │  │ moved_at        │
-│ returned_at │  │ notes           │
-│ timestamps  │  │ timestamps      │
-└─────────────┘  └─────────────────┘
+    ┌───────┼───────┐
+    │       │       │
+    ▼       ▼       ▼
+┌─────────┐ ┌───────────────┐ ┌───────────┐
+│  loans  │ │stock_movements│ │ scan_logs │
+├─────────┤ ├───────────────┤ ├───────────┤
+│ id      │ │ id            │ │ id        │
+│ item_id │ │ item_id (FK)  │ │ item_id   │
+│borrower │ │ type (in/out) │ │ user_id   │
+│quantity │ │ quantity      │ │ purpose ✨│
+│borrowed │ │ reason        │ │ notes     │
+│ due_at  │ │ moved_at      │ │scanned_at │
+│returned │ │ notes         │ │ ip_address│
+│timestamp│ │ timestamps    │ │ timestamps│
+└─────────┘ └───────────────┘ └───────────┘
 ```
 
 ### Flow Aplikasi
@@ -88,6 +90,10 @@ Login → Dashboard → [Inventaris|Peminjaman|Mutasi|Laporan|...]
 | Export data | ✅ | ✅ | ✅ |
 | Manage users | ✅ | ❌ | ❌ |
 | Manage backups | ✅ | ❌ | ❌ |
+| QR Code scan | ✅ | ✅ | ✅ |
+| QR Audit scan | ✅ | ✅ | ❌ |
+| Generate/Print QR | ✅ | ✅ | ❌ |
+| View scan logs | ✅ | ❌ | ❌ |
 
 ---
 
@@ -108,6 +114,17 @@ Login → Dashboard → [Inventaris|Peminjaman|Mutasi|Laporan|...]
 ### Stock Movements
 - `GET /stock-movements` - List movements
 - `POST /stock-movements` - Create movement
+
+### QR Code (V5)
+- `GET /scan` - Scan page
+- `GET /scan/audit` - Audit scan page
+- `GET /i/{key}` - Public redirect from QR scan
+- `POST /i/{key}/audit` - Scan with purpose
+- `POST /items/{id}/qr/generate` - Generate QR
+- `GET /items/{id}/qr/print` - Print label
+- `GET /qr/bulk` - Bulk print form
+- `GET /scan-logs` - Scan logs (admin)
+- `GET /scan-logs/export` - Export scan logs
 
 ### Export
 - `GET /export/excel` - Export CSV

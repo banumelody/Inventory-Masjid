@@ -4,9 +4,15 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPasswordNotification;
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPassword
 {
+    use CanResetPasswordTrait, Notifiable;
+
     protected $fillable = [
         'name',
         'email',
@@ -71,5 +77,13 @@ class User extends Authenticatable
     public function canManageStock(): bool
     {
         return $this->isAdmin() || $this->isOperator();
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

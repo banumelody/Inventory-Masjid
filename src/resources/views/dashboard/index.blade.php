@@ -3,115 +3,146 @@
 @section('title', 'Dashboard - Inventory Masjid')
 
 @section('content')
-<h1 class="text-2xl font-bold text-gray-800 mb-6">📊 Dashboard</h1>
+<h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">📊 Dashboard</h1>
 
 <!-- Stats Overview -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="text-3xl font-bold text-green-600">{{ $stats['total_items'] }}</div>
-        <div class="text-sm text-gray-500">Total Jenis Barang</div>
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8">
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <div class="text-2xl md:text-3xl font-bold text-green-600">{{ $stats['total_items'] }}</div>
+        <div class="text-xs md:text-sm text-gray-500">Jenis Barang</div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="text-3xl font-bold text-blue-600">{{ number_format($stats['total_quantity']) }}</div>
-        <div class="text-sm text-gray-500">Total Stok</div>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <div class="text-2xl md:text-3xl font-bold text-blue-600">{{ number_format($stats['total_quantity']) }}</div>
+        <div class="text-xs md:text-sm text-gray-500">Total Stok</div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="text-3xl font-bold text-yellow-600">{{ $stats['active_loans'] }}</div>
-        <div class="text-sm text-gray-500">Sedang Dipinjam</div>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <div class="text-2xl md:text-3xl font-bold text-yellow-600">{{ $stats['active_loans'] }}</div>
+        <div class="text-xs md:text-sm text-gray-500">Dipinjam</div>
     </div>
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="text-3xl font-bold {{ $stats['overdue_loans'] > 0 ? 'text-red-600' : 'text-gray-400' }}">{{ $stats['overdue_loans'] }}</div>
-        <div class="text-sm text-gray-500">Terlambat Kembali</div>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <div class="text-2xl md:text-3xl font-bold {{ $stats['overdue_loans'] > 0 ? 'text-red-600' : 'text-gray-400' }}">{{ $stats['overdue_loans'] }}</div>
+        <div class="text-xs md:text-sm text-gray-500">Terlambat</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <div class="text-2xl md:text-3xl font-bold text-purple-600">{{ $stats['items_with_qr'] }}</div>
+        <div class="text-xs md:text-sm text-gray-500">🏷️ Punya QR</div>
     </div>
 </div>
 
-<!-- Kondisi Barang -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-        <div class="flex items-center">
-            <span class="text-2xl mr-3">✅</span>
-            <div>
-                <div class="text-2xl font-bold text-green-700">{{ $stats['items_good'] }}</div>
-                <div class="text-sm text-green-600">Kondisi Baik</div>
-            </div>
+<!-- Analytics Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+    <!-- Loan Trends Chart -->
+    <div class="bg-white rounded-lg shadow p-4 md:p-6">
+        <h2 class="text-base md:text-lg font-semibold mb-4">📈 Tren Peminjaman (12 Bulan)</h2>
+        <div class="relative" style="height: 250px;">
+            <canvas id="loanTrendsChart"></canvas>
         </div>
     </div>
-    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <div class="flex items-center">
-            <span class="text-2xl mr-3">⚠️</span>
-            <div>
-                <div class="text-2xl font-bold text-yellow-700">{{ $stats['items_need_repair'] }}</div>
-                <div class="text-sm text-yellow-600">Perlu Perbaikan</div>
-            </div>
-        </div>
-    </div>
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-        <div class="flex items-center">
-            <span class="text-2xl mr-3">❌</span>
-            <div>
-                <div class="text-2xl font-bold text-red-700">{{ $stats['items_broken'] }}</div>
-                <div class="text-sm text-red-600">Rusak</div>
-            </div>
+
+    <!-- Condition Pie Chart -->
+    <div class="bg-white rounded-lg shadow p-4 md:p-6">
+        <h2 class="text-base md:text-lg font-semibold mb-4">🥧 Kondisi Barang</h2>
+        <div class="relative flex justify-center" style="height: 250px;">
+            <canvas id="conditionChart"></canvas>
         </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Overdue Loans Warning -->
-    @if($overdueLoans->count() > 0)
-    <div class="bg-red-50 border border-red-300 rounded-lg p-4">
-        <h2 class="text-lg font-semibold text-red-800 mb-3">🚨 Peminjaman Terlambat</h2>
-        <div class="space-y-2">
-            @foreach($overdueLoans as $loan)
-            <div class="bg-white rounded p-3 flex justify-between items-center">
-                <div>
-                    <div class="font-medium">{{ $loan->item->name }}</div>
-                    <div class="text-sm text-gray-500">{{ $loan->borrower_name }} - sejak {{ $loan->borrowed_at->format('d/m/Y') }}</div>
-                </div>
-                <div class="text-red-600 text-sm font-medium">
-                    {{ $loan->due_at->diffForHumans() }}
-                </div>
-            </div>
-            @endforeach
-        </div>
-        <a href="{{ route('loans.index', ['status' => 'overdue']) }}" class="block text-center text-red-600 hover:text-red-800 mt-3 text-sm">
-            Lihat Semua →
-        </a>
+<!-- Most Borrowed Items Chart -->
+<div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6 md:mb-8">
+    <h2 class="text-base md:text-lg font-semibold mb-4">🏆 Barang Paling Sering Dipinjam</h2>
+    <div class="relative" style="height: 300px;">
+        <canvas id="mostBorrowedChart"></canvas>
     </div>
-    @endif
+</div>
 
+<!-- Kondisi Barang Summary -->
+<div class="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
+    <div class="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4">
+        <div class="flex flex-col md:flex-row md:items-center">
+            <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">✅</span>
+            <div>
+                <div class="text-xl md:text-2xl font-bold text-green-700">{{ $stats['items_good'] }}</div>
+                <div class="text-xs md:text-sm text-green-600">Baik</div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 md:p-4">
+        <div class="flex flex-col md:flex-row md:items-center">
+            <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">⚠️</span>
+            <div>
+                <div class="text-xl md:text-2xl font-bold text-yellow-700">{{ $stats['items_need_repair'] }}</div>
+                <div class="text-xs md:text-sm text-yellow-600">Perbaikan</div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-3 md:p-4">
+        <div class="flex flex-col md:flex-row md:items-center">
+            <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">❌</span>
+            <div>
+                <div class="text-xl md:text-2xl font-bold text-red-700">{{ $stats['items_broken'] }}</div>
+                <div class="text-xs md:text-sm text-red-600">Rusak</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Overdue Loans Warning (Full Width on Mobile) -->
+@if($overdueLoans->count() > 0)
+<div class="bg-red-50 border border-red-300 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+    <h2 class="text-base md:text-lg font-semibold text-red-800 mb-3">🚨 Peminjaman Terlambat</h2>
+    <div class="space-y-2">
+        @foreach($overdueLoans as $loan)
+        <div class="bg-white rounded p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div class="min-w-0">
+                <div class="font-medium truncate">{{ $loan->item->name }}</div>
+                <div class="text-sm text-gray-500">{{ $loan->borrower_name }}</div>
+            </div>
+            <div class="text-red-600 text-sm font-medium flex-shrink-0">
+                {{ $loan->due_at->diffForHumans() }}
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <a href="{{ route('loans.index', ['status' => 'overdue']) }}" class="block text-center text-red-600 hover:text-red-800 mt-3 text-sm touch-target py-2">
+        Lihat Semua →
+    </a>
+</div>
+@endif
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
     <!-- Recent Items -->
-    <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold mb-3">📦 Barang Terbaru</h2>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <h2 class="text-base md:text-lg font-semibold mb-3">📦 Barang Terbaru</h2>
         <div class="space-y-2">
             @forelse($recentItems as $item)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
-                <div>
-                    <a href="{{ route('items.show', $item) }}" class="font-medium text-blue-600 hover:text-blue-800">{{ $item->name }}</a>
-                    <div class="text-sm text-gray-500">{{ $item->category->name }}</div>
+                <div class="min-w-0 flex-1 mr-2">
+                    <a href="{{ route('items.show', $item) }}" class="font-medium text-blue-600 hover:text-blue-800 truncate block">{{ $item->name }}</a>
+                    <div class="text-xs text-gray-500">{{ $item->category->name }}</div>
                 </div>
-                <div class="text-sm text-gray-500">{{ $item->quantity }} {{ $item->unit }}</div>
+                <div class="text-sm text-gray-500 flex-shrink-0">{{ $item->quantity }} {{ $item->unit }}</div>
             </div>
             @empty
             <p class="text-gray-500 text-sm">Belum ada barang.</p>
             @endforelse
         </div>
-        <a href="{{ route('items.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm">
+        <a href="{{ route('items.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm touch-target py-2">
             Lihat Semua →
         </a>
     </div>
 
     <!-- Recent Movements -->
-    <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold mb-3">📊 Mutasi Terbaru</h2>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <h2 class="text-base md:text-lg font-semibold mb-3">📊 Mutasi Terbaru</h2>
         <div class="space-y-2">
             @forelse($recentMovements as $movement)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
-                <div>
-                    <div class="font-medium">{{ $movement->item->name }}</div>
-                    <div class="text-sm text-gray-500">{{ $movement->reason }}</div>
+                <div class="min-w-0 flex-1 mr-2">
+                    <div class="font-medium truncate">{{ $movement->item->name }}</div>
+                    <div class="text-xs text-gray-500">{{ $movement->reason }}</div>
                 </div>
-                <div class="text-sm font-medium {{ $movement->type === 'in' ? 'text-green-600' : 'text-red-600' }}">
+                <div class="text-sm font-medium flex-shrink-0 {{ $movement->type === 'in' ? 'text-green-600' : 'text-red-600' }}">
                     {{ $movement->type === 'in' ? '+' : '-' }}{{ $movement->quantity }}
                 </div>
             </div>
@@ -119,14 +150,14 @@
             <p class="text-gray-500 text-sm">Belum ada mutasi.</p>
             @endforelse
         </div>
-        <a href="{{ route('stock-movements.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm">
+        <a href="{{ route('stock-movements.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm touch-target py-2">
             Lihat Semua →
         </a>
     </div>
 
     <!-- Items by Category -->
-    <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold mb-3">📁 Per Kategori</h2>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <h2 class="text-base md:text-lg font-semibold mb-3">📁 Per Kategori</h2>
         <div class="space-y-2">
             @foreach($itemsByCategory as $category)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -138,8 +169,8 @@
     </div>
 
     <!-- Items by Location -->
-    <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold mb-3">📍 Per Lokasi</h2>
+    <div class="bg-white rounded-lg shadow p-3 md:p-4">
+        <h2 class="text-base md:text-lg font-semibold mb-3">📍 Per Lokasi</h2>
         <div class="space-y-2">
             @foreach($itemsByLocation as $location)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -151,21 +182,176 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="bg-white rounded-lg shadow p-4">
-    <h2 class="text-lg font-semibold mb-3">⚡ Aksi Cepat</h2>
-    <div class="flex flex-wrap gap-3">
-        @if(auth()->user()->canEditItems())
-        <a href="{{ route('items.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">+ Tambah Barang</a>
+<!-- Recent Scans Section -->
+@if($recentScans->count() > 0)
+<div class="bg-white rounded-lg shadow p-3 md:p-4 mb-6 md:mb-8">
+    <div class="flex justify-between items-center mb-3">
+        <h2 class="text-base md:text-lg font-semibold">📷 Scan QR Terbaru</h2>
+        @if(auth()->user()->isAdmin())
+        <a href="{{ route('scan-logs.index') }}" class="text-blue-600 hover:text-blue-800 text-sm">Lihat Semua →</a>
         @endif
-        @if(auth()->user()->canManageLoans())
-        <a href="{{ route('loans.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">📤 Pinjamkan</a>
-        @endif
-        @if(auth()->user()->canManageStock())
-        <a href="{{ route('stock-movements.create') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">📊 Mutasi Stok</a>
-        @endif
-        <a href="{{ route('export.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">📥 Export</a>
-        <a href="{{ route('feedbacks.create') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">💬 Feedback</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full">
+            <thead>
+                <tr class="text-left text-xs text-gray-500 border-b">
+                    <th class="pb-2">Barang</th>
+                    <th class="pb-2">User</th>
+                    <th class="pb-2">Tujuan</th>
+                    <th class="pb-2 text-right">Waktu</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm">
+                @foreach($recentScans as $scan)
+                <tr class="border-b last:border-0">
+                    <td class="py-2">
+                        @if($scan->item)
+                            <a href="{{ route('items.show', $scan->item) }}" class="text-blue-600 hover:text-blue-800">{{ Str::limit($scan->item->name, 25) }}</a>
+                        @else
+                            <span class="text-gray-400">Dihapus</span>
+                        @endif
+                    </td>
+                    <td class="py-2 text-gray-600">{{ $scan->user->name ?? 'Guest' }}</td>
+                    <td class="py-2">
+                        @if($scan->purpose)
+                            <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100">{{ $scan->purpose_label }}</span>
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
+                    <td class="py-2 text-gray-400 text-right text-xs">{{ $scan->scanned_at->diffForHumans() }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
+@endif
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-lg shadow p-3 md:p-4">
+    <h2 class="text-base md:text-lg font-semibold mb-3">⚡ Aksi Cepat</h2>
+    <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 md:gap-3">
+        @if(auth()->user()->canEditItems())
+        <a href="{{ route('items.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">+ Tambah Barang</a>
+        @endif
+        @if(auth()->user()->canManageLoans())
+        <a href="{{ route('loans.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📤 Pinjamkan</a>
+        <a href="{{ route('qrcode.audit-scan') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📋 Audit Scan</a>
+        @endif
+        @if(auth()->user()->canManageStock())
+        <a href="{{ route('stock-movements.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📊 Mutasi</a>
+        @endif
+        <a href="{{ route('export.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📥 Export</a>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Loan Trends Line Chart
+    const loanTrendsCtx = document.getElementById('loanTrendsChart').getContext('2d');
+    new Chart(loanTrendsCtx, {
+        type: 'line',
+        data: {
+            labels: @json($loanTrends['labels']),
+            datasets: [
+                {
+                    label: 'Dipinjam',
+                    data: @json($loanTrends['borrowed']),
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                },
+                {
+                    label: 'Dikembalikan',
+                    data: @json($loanTrends['returned']),
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Condition Pie Chart
+    const conditionCtx = document.getElementById('conditionChart').getContext('2d');
+    new Chart(conditionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: @json($conditionStats['labels']),
+            datasets: [{
+                data: @json($conditionStats['data']),
+                backgroundColor: @json($conditionStats['colors']),
+                borderWidth: 2,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+
+    // Most Borrowed Items Bar Chart
+    const mostBorrowedCtx = document.getElementById('mostBorrowedChart').getContext('2d');
+    new Chart(mostBorrowedCtx, {
+        type: 'bar',
+        data: {
+            labels: @json($mostBorrowedItems['labels']),
+            datasets: [{
+                label: 'Jumlah Peminjaman',
+                data: @json($mostBorrowedItems['counts']),
+                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 @endsection
