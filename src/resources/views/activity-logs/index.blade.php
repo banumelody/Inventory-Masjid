@@ -4,7 +4,12 @@
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📋 Activity Log</h1>
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800">
+        📋 Activity Log
+        @if(isset($isGlobalView) && $isGlobalView)
+            <span class="text-sm font-normal text-blue-600 ml-2">🌐 Global View</span>
+        @endif
+    </h1>
 </div>
 
 <!-- Filter -->
@@ -47,6 +52,17 @@
             <button type="submit" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold">Filter</button>
             <a href="{{ route('activity-logs.index') }}" class="flex-1 md:flex-none bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold text-center">Reset</a>
         </div>
+        @if(isset($isGlobalView) && $isGlobalView && $masjids->count())
+        <div class="md:w-48">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Masjid</label>
+            <select name="masjid_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-base">
+                <option value="">Semua Masjid</option>
+                @foreach($masjids as $masjid)
+                <option value="{{ $masjid->id }}" {{ request('masjid_id') == $masjid->id ? 'selected' : '' }}>{{ $masjid->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        @endif
     </form>
 </div>
 
@@ -97,6 +113,9 @@
                     <p class="text-sm text-gray-900 mt-1">{{ $log->description }}</p>
                     <div class="flex items-center gap-4 mt-2 text-xs text-gray-500">
                         <span>{{ $log->user?->name ?? 'System' }}</span>
+                        @if(isset($isGlobalView) && $isGlobalView && $log->masjid)
+                        <span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded">🕌 {{ $log->masjid->name }}</span>
+                        @endif
                         <span>{{ $log->created_at->format('d/m/Y H:i') }}</span>
                         @if($log->ip_address)
                         <span class="hidden sm:inline">IP: {{ $log->ip_address }}</span>

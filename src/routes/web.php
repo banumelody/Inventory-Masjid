@@ -192,14 +192,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/imports/{import}', [ImportController::class, 'show'])->name('imports.show');
     });
 
-    // Activity Logs - Admin only
-    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
+    // Activity Logs - Admin only (superadmin can view global)
+    Route::middleware('role:admin')->group(function () {
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 
-    // Scan Logs - Admin only
-    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
+    // Scan Logs - Admin only (superadmin can view global)
+    Route::middleware('role:admin')->group(function () {
         Route::get('/scan-logs', [ScanLogController::class, 'index'])->name('scan-logs.index');
         Route::get('/scan-logs/export', [ScanLogController::class, 'export'])->name('scan-logs.export');
         Route::get('/scan-logs/{scanLog}', [ScanLogController::class, 'show'])->name('scan-logs.show');

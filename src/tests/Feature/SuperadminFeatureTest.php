@@ -462,8 +462,6 @@ class SuperadminFeatureTest extends TestCase
             '/users',
             '/settings',
             '/backups',
-            '/activity-logs',
-            '/scan-logs',
             '/feedbacks/create',
         ];
 
