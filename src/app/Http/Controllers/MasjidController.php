@@ -161,4 +161,48 @@ class MasjidController extends Controller
 
         return redirect()->back()->with('success', "Beralih ke: {$masjid->name}");
     }
+
+    public function destroy(Masjid $masjid): RedirectResponse
+    {
+        $masjidName = $masjid->name;
+
+        // Delete all tenant data in order (respecting FK constraints)
+        $masjidId = $masjid->id;
+
+        \App\Models\MaintenancePhoto::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Maintenance::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\StockMovement::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        Loan::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\ScanLog::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        Item::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Category::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Location::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\ImportLog::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Feedback::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Backup::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        \App\Models\Setting::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        ActivityLog::withoutGlobalScopes()->where('masjid_id', $masjidId)->delete();
+        User::where('masjid_id', $masjidId)->delete();
+
+        $masjid->delete();
+
+        ActivityLog::withoutGlobalScopes()->create([
+            'user_id' => auth()->id(),
+            'action' => 'delete',
+            'model_type' => Masjid::class,
+            'model_id' => $masjidId,
+            'description' => "Menghapus masjid: {$masjidName}",
+            'old_values' => ['name' => $masjidName, 'id' => $masjidId],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        // Clear context if current session was on this masjid
+        if (session('current_masjid_id') == $masjidId) {
+            session()->forget('current_masjid_id');
+        }
+
+        return redirect()->route('masjids.index')
+            ->with('success', "Masjid \"{$masjidName}\" beserta seluruh datanya berhasil dihapus.");
+    }
 }

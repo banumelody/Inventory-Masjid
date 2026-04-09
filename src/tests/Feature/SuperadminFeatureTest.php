@@ -511,4 +511,25 @@ class SuperadminFeatureTest extends TestCase
         $category = Category::create(['name' => 'Auto Context Category']);
         $this->assertEquals($this->masjidA->id, $category->masjid_id);
     }
+
+    // --- P2-10: Delete Masjid ---
+
+    public function test_superadmin_can_delete_masjid()
+    {
+        $catA = Category::create(['name' => 'Cat A', 'masjid_id' => $this->masjidA->id]);
+        $locA = Location::create(['name' => 'Loc A', 'masjid_id' => $this->masjidA->id]);
+        Item::create([
+            'name' => 'Item A', 'quantity' => 1, 'unit' => 'pcs', 'condition' => 'baik',
+            'category_id' => $catA->id, 'location_id' => $locA->id, 'masjid_id' => $this->masjidA->id,
+        ]);
+
+        $response = $this->actingAs($this->superadmin)
+            ->delete("/masjids/{$this->masjidA->id}");
+
+        $response->assertRedirect(route('masjids.index'));
+        $this->assertDatabaseMissing('masjids', ['id' => $this->masjidA->id]);
+        $this->assertDatabaseMissing('categories', ['masjid_id' => $this->masjidA->id]);
+        $this->assertDatabaseMissing('items', ['masjid_id' => $this->masjidA->id]);
+        $this->assertDatabaseMissing('users', ['masjid_id' => $this->masjidA->id]);
+    }
 }

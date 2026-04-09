@@ -225,6 +225,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/masjids/{masjid}', [MasjidController::class, 'show'])->name('masjids.show');
         Route::get('/masjids/{masjid}/edit', [MasjidController::class, 'edit'])->name('masjids.edit');
         Route::put('/masjids/{masjid}', [MasjidController::class, 'update'])->name('masjids.update');
+        Route::delete('/masjids/{masjid}', [MasjidController::class, 'destroy'])->name('masjids.destroy');
         Route::post('/masjids/switch', [MasjidController::class, 'switchContext'])->name('masjids.switch');
     });
 
