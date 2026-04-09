@@ -63,6 +63,8 @@ class DashboardController extends Controller
     private function tenantDashboard(): View
     {
         // Summary stats
+        $masjidId = app()->bound('current_masjid_id') ? app('current_masjid_id') : null;
+
         $stats = [
             'total_items' => Item::count(),
             'total_quantity' => Item::sum('quantity'),
@@ -76,7 +78,9 @@ class DashboardController extends Controller
                 ->count(),
             'total_categories' => Category::count(),
             'total_locations' => Location::count(),
-            'total_users' => User::count(),
+            'total_users' => $masjidId
+                ? User::where('masjid_id', $masjidId)->where('is_superadmin', false)->count()
+                : User::where('is_superadmin', false)->count(),
             'items_with_qr' => Item::whereNotNull('qr_code_key')->count(),
             'today_scans' => ScanLog::whereDate('scanned_at', today())->count(),
         ];
@@ -177,14 +181,20 @@ class DashboardController extends Controller
      */
     private function getMostBorrowedItems(): array
     {
-        $items = Item::select('items.id', 'items.name')
+        $query = Item::select('items.id', 'items.name')
             ->join('loans', 'items.id', '=', 'loans.item_id')
             ->selectRaw('COUNT(loans.id) as loan_count')
             ->selectRaw('SUM(loans.quantity) as total_borrowed')
             ->groupBy('items.id', 'items.name')
             ->orderByDesc('loan_count')
-            ->limit(10)
-            ->get();
+            ->limit(10);
+
+        // Ensure loans table is also scoped by tenant
+        if ($masjidId = app()->bound('current_masjid_id') ? app('current_masjid_id') : null) {
+            $query->where('loans.masjid_id', $masjidId);
+        }
+
+        $items = $query->get();
 
         return [
             'labels' => $items->pluck('name')->toArray(),
