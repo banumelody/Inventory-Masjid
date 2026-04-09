@@ -23,6 +23,11 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\SetLocale::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'api' => [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
     ];
 
     protected $middlewareAliases = [

@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements CanResetPassword
 {
-    use CanResetPasswordTrait, Notifiable;
+    use CanResetPasswordTrait, HasApiTokens, Notifiable;
 
     protected $fillable = [
         'name',
