@@ -162,6 +162,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
     });
 
+    // User transfer - Superadmin only
+    Route::middleware(['superadmin'])->group(function () {
+        Route::get('/users/{user}/transfer', [UserController::class, 'transfer'])->name('users.transfer');
+        Route::put('/users/{user}/transfer', [UserController::class, 'processTransfer'])->name('users.transfer.process');
+    });
+
     // Backups - Superadmin only (full database dump)
     Route::middleware(['superadmin'])->group(function () {
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');

@@ -136,4 +136,61 @@ class UserController extends Controller
             abort(403, 'Pengguna bukan milik masjid ini.');
         }
     }
+
+    public function transfer(User $user): View|RedirectResponse
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        if ($user->is_superadmin) {
+            return redirect()->route('users.index')
+                ->with('error', 'Tidak dapat transfer superadmin.');
+        }
+
+        $masjids = \App\Models\Masjid::where('status', 'active')->orderBy('name')->get();
+        return view('users.transfer', compact('user', 'masjids'));
+    }
+
+    public function processTransfer(Request $request, User $user): RedirectResponse
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        if ($user->is_superadmin) {
+            return redirect()->route('users.index')
+                ->with('error', 'Tidak dapat transfer superadmin.');
+        }
+
+        $validated = $request->validate([
+            'masjid_id' => 'required|exists:masjids,id',
+        ]);
+
+        $oldMasjid = $user->masjid;
+        $newMasjid = \App\Models\Masjid::findOrFail($validated['masjid_id']);
+
+        if ($user->masjid_id == $newMasjid->id) {
+            return redirect()->route('users.index')
+                ->with('error', 'Pengguna sudah berada di masjid tersebut.');
+        }
+
+        $oldValues = ['masjid_id' => $user->masjid_id, 'masjid_name' => $oldMasjid?->name];
+        $user->update(['masjid_id' => $newMasjid->id]);
+
+        ActivityLog::withoutGlobalScopes()->create([
+            'user_id' => auth()->id(),
+            'action' => 'transfer',
+            'model_type' => User::class,
+            'model_id' => $user->id,
+            'description' => "Transfer pengguna {$user->name} dari {$oldMasjid?->name} ke {$newMasjid->name}",
+            'old_values' => $oldValues,
+            'new_values' => ['masjid_id' => $newMasjid->id, 'masjid_name' => $newMasjid->name],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return redirect()->route('users.index')
+            ->with('success', "Pengguna {$user->name} berhasil dipindahkan ke {$newMasjid->name}.");
+    }
 }

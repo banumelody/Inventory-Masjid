@@ -39,6 +39,9 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <a href="{{ route('users.edit', $user) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                    @if(auth()->user()->isSuperAdmin())
+                    <a href="{{ route('users.transfer', $user) }}" class="text-indigo-600 hover:text-indigo-900">Transfer</a>
+                    @endif
                     @if($user->id !== auth()->id())
                     <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus pengguna ini?')">
                         @csrf
