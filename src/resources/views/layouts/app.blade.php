@@ -312,6 +312,21 @@
             <!-- Page Content -->
             <main class="flex-1 p-4 md:p-6 lg:p-8">
                 <div class="max-w-7xl mx-auto">
+                    @auth
+                        @if(auth()->user()->isSuperAdmin() && session('current_masjid_id'))
+                            @php $currentMasjid = \App\Models\Masjid::find(session('current_masjid_id')); @endphp
+                            @if($currentMasjid)
+                            <div class="bg-indigo-50 border border-indigo-200 text-indigo-800 px-4 py-2 rounded-lg mb-4 flex items-center justify-between text-sm">
+                                <span>🕌 Melihat data <strong>{{ $currentMasjid->name }}</strong></span>
+                                <form action="{{ route('masjids.switch') }}" method="POST" class="inline">
+                                    @csrf
+                                    <input type="hidden" name="masjid_id" value="">
+                                    <button type="submit" class="text-indigo-600 hover:text-indigo-800 underline text-xs">Kembali ke Global View</button>
+                                </form>
+                            </div>
+                            @endif
+                        @endif
+                    @endauth
                     @if(session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 text-sm md:text-base">
                             {{ session('success') }}
