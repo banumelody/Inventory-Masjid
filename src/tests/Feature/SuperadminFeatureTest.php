@@ -131,9 +131,19 @@ class SuperadminFeatureTest extends TestCase
 
     public function test_regular_admin_can_view_masjid_list()
     {
-        // Admin role can access role:admin routes, but masjid index should still work
+        // Regular admin should be BLOCKED from masjid management
         $response = $this->actingAs($this->adminA)->get('/masjids');
-        $response->assertStatus(200);
+        $response->assertStatus(403);
+    }
+
+    public function test_regular_admin_blocked_from_masjid_crud()
+    {
+        $this->actingAs($this->adminA)->get('/masjids/create')->assertStatus(403);
+        $this->actingAs($this->adminA)->post('/masjids', ['name' => 'Test'])->assertStatus(403);
+        $this->actingAs($this->adminA)->get("/masjids/{$this->masjidA->id}")->assertStatus(403);
+        $this->actingAs($this->adminA)->get("/masjids/{$this->masjidA->id}/edit")->assertStatus(403);
+        $this->actingAs($this->adminA)->put("/masjids/{$this->masjidA->id}", ['name' => 'X'])->assertStatus(403);
+        $this->actingAs($this->adminA)->post('/masjids/switch', ['masjid_id' => '1'])->assertStatus(403);
     }
 
     public function test_masjid_list_shows_stats()

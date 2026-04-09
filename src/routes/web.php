@@ -214,7 +214,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Superadmin - Masjid management
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('superadmin')->group(function () {
         Route::get('/masjids', [MasjidController::class, 'index'])->name('masjids.index');
         Route::get('/masjids/create', [MasjidController::class, 'create'])->name('masjids.create');
         Route::post('/masjids', [MasjidController::class, 'store'])->name('masjids.store');
