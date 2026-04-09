@@ -42,9 +42,14 @@ class ActivityLogController extends Controller
 
         $logs = $query->paginate(20)->withQueryString();
 
-        // Get filter options
+        // Get filter options (scoped to current tenant)
         $actions = ActivityLog::distinct()->pluck('action')->filter();
-        $users = \App\Models\User::orderBy('name')->get(['id', 'name']);
+        $masjidId = app()->bound('current_masjid_id') ? app('current_masjid_id') : null;
+        $userQuery = \App\Models\User::where('is_superadmin', false)->orderBy('name');
+        if ($masjidId) {
+            $userQuery->where('masjid_id', $masjidId);
+        }
+        $users = $userQuery->get(['id', 'name']);
         $modelTypes = ActivityLog::distinct()->pluck('model_type')->filter();
 
         return view('activity-logs.index', compact('logs', 'actions', 'users', 'modelTypes'));
