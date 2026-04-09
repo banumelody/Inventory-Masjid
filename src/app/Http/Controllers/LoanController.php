@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Loan;
 use App\Models\Item;
 use App\Models\ActivityLog;
+use App\Models\Notification;
 use App\Scopes\MasjidScope;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -78,6 +79,17 @@ class LoanController extends Controller
 
         // Log activity
         ActivityLog::log('create', "Peminjaman baru: {$item->name} oleh {$loan->borrower_name}", $loan, null, $validated);
+
+        // Notify admins about new loan
+        if (app()->bound('current_masjid_id') && app('current_masjid_id')) {
+            Notification::notifyMasjidAdmins(
+                app('current_masjid_id'),
+                'loan_created',
+                'Peminjaman Baru',
+                "{$loan->borrower_name} meminjam {$loan->quantity} {$item->unit} {$item->name}",
+                route('loans.show', $loan)
+            );
+        }
 
         return redirect()->route('loans.index')
             ->with('success', 'Peminjaman berhasil dicatat.');

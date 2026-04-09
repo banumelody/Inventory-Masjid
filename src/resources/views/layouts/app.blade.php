@@ -253,6 +253,11 @@
                             <span class="text-lg">📖</span>
                             <span>Panduan</span>
                         </a>
+                        <a href="{{ route('notifications.index') }}" class="sidebar-link {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+                            <span class="text-lg">🔔</span>
+                            <span>Notifikasi</span>
+                            <span id="notif-badge-sidebar" class="hidden ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"></span>
+                        </a>
                         <a href="{{ route('help.faq') }}" class="sidebar-link {{ request()->routeIs('help.faq') ? 'active' : '' }}">
                             <span class="text-lg">❓</span>
                             <span>FAQ</span>
@@ -310,7 +315,13 @@
                     @endif
                     <span class="font-bold text-gray-800">{{ Str::limit(\App\Models\Setting::appName(), 20) }}</span>
                 </a>
-                <div class="w-10"></div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('notifications.index') }}" class="p-2 rounded-lg hover:bg-gray-100 relative" title="Notifikasi">
+                        <span class="text-lg">🔔</span>
+                        <span id="notif-badge-mobile" class="hidden absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"></span>
+                    </a>
+                    <div class="w-2"></div>
+                </div>
             </header>
 
             <!-- Page Content -->
@@ -430,5 +441,28 @@
     </script>
 
     @yield('scripts')
+
+    @auth
+    <script>
+        function fetchNotifCount() {
+            fetch('{{ route("notifications.unreadCount") }}')
+                .then(r => r.json())
+                .then(data => {
+                    const badges = document.querySelectorAll('#notif-badge-mobile, #notif-badge-sidebar');
+                    badges.forEach(badge => {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    });
+                })
+                .catch(() => {});
+        }
+        fetchNotifCount();
+        setInterval(fetchNotifCount, 60000);
+    </script>
+    @endauth
 </body>
 </html>
