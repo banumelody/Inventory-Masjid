@@ -151,13 +151,32 @@ class MasjidController extends Controller
     {
         $masjidId = $request->input('masjid_id');
 
-        if ($masjidId === 'all' || $masjidId === null) {
+        if ($masjidId === 'all' || $masjidId === null || $masjidId === '') {
             $request->session()->forget('current_masjid_id');
+
+            ActivityLog::withoutGlobalScopes()->create([
+                'user_id' => auth()->id(),
+                'action' => 'switch_context',
+                'description' => 'Beralih ke mode Global View (semua masjid)',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return redirect()->back()->with('success', 'Mode: Semua Masjid');
         }
 
         $masjid = Masjid::findOrFail($masjidId);
         $request->session()->put('current_masjid_id', $masjid->id);
+
+        ActivityLog::withoutGlobalScopes()->create([
+            'user_id' => auth()->id(),
+            'action' => 'switch_context',
+            'model_type' => Masjid::class,
+            'model_id' => $masjid->id,
+            'description' => "Beralih ke konteks masjid: {$masjid->name}",
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->back()->with('success', "Beralih ke: {$masjid->name}");
     }
