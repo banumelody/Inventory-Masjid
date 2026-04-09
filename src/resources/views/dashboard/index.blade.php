@@ -3,10 +3,43 @@
 @section('title', 'Dashboard - Inventory Masjid')
 
 @section('content')
-<h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">📊 Dashboard</h1>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📊 Dashboard</h1>
+    <button onclick="toggleWidgetSettings()" class="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-gray-600">
+        ⚙️ Atur Widget
+    </button>
+</div>
 
+<!-- Widget Settings Panel -->
+<div id="widget-settings" class="hidden bg-white rounded-lg shadow p-4 mb-6 border border-blue-200">
+    <h3 class="font-semibold text-gray-700 mb-3">Tampilkan/Sembunyikan Widget</h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        @php $widgetLabels = [
+            'stats_overview' => 'Ringkasan Statistik',
+            'charts' => 'Grafik Tren & Kondisi',
+            'most_borrowed' => 'Barang Paling Dipinjam',
+            'condition_summary' => 'Ringkasan Kondisi',
+            'overdue_loans' => 'Peminjaman Terlambat',
+            'recent_items' => 'Barang Terbaru',
+            'recent_movements' => 'Mutasi Terbaru',
+            'items_by_category' => 'Per Kategori',
+            'items_by_location' => 'Per Lokasi',
+            'recent_scans' => 'Scan QR Terbaru',
+            'quick_actions' => 'Aksi Cepat',
+        ]; @endphp
+        @foreach($widgetLabels as $key => $label)
+        <label class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-50">
+            <input type="checkbox" class="widget-toggle rounded" data-widget="{{ $key }}"
+                {{ ($widgetPrefs[$key] ?? true) ? 'checked' : '' }}>
+            <span>{{ $label }}</span>
+        </label>
+        @endforeach
+    </div>
+</div>
+
+@if($widgetPrefs['stats_overview'] ?? true)
 <!-- Stats Overview -->
-<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8" data-widget-section="stats_overview">
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold text-green-600">{{ $stats['total_items'] }}</div>
         <div class="text-xs md:text-sm text-gray-500">Jenis Barang</div>
@@ -28,7 +61,9 @@
         <div class="text-xs md:text-sm text-gray-500">🏷️ Punya QR</div>
     </div>
 </div>
+@endif
 
+@if($widgetPrefs['charts'] ?? true)
 <!-- Analytics Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
     <!-- Loan Trends Chart -->
@@ -47,7 +82,9 @@
         </div>
     </div>
 </div>
+@endif
 
+@if($widgetPrefs['most_borrowed'] ?? true)
 <!-- Most Borrowed Items Chart -->
 <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6 md:mb-8">
     <h2 class="text-base md:text-lg font-semibold mb-4">🏆 Barang Paling Sering Dipinjam</h2>
@@ -55,7 +92,9 @@
         <canvas id="mostBorrowedChart"></canvas>
     </div>
 </div>
+@endif
 
+@if($widgetPrefs['condition_summary'] ?? true)
 <!-- Kondisi Barang Summary -->
 <div class="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
     <div class="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4">
@@ -86,9 +125,9 @@
         </div>
     </div>
 </div>
+@endif
 
-<!-- Overdue Loans Warning (Full Width on Mobile) -->
-@if($overdueLoans->count() > 0)
+@if(($widgetPrefs['overdue_loans'] ?? true) && $overdueLoans->count() > 0)
 <div class="bg-red-50 border border-red-300 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
     <h2 class="text-base md:text-lg font-semibold text-red-800 mb-3">🚨 Peminjaman Terlambat</h2>
     <div class="space-y-2">
@@ -111,6 +150,7 @@
 @endif
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+    @if($widgetPrefs['recent_items'] ?? true)
     <!-- Recent Items -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <h2 class="text-base md:text-lg font-semibold mb-3">📦 Barang Terbaru</h2>
@@ -131,7 +171,9 @@
             Lihat Semua →
         </a>
     </div>
+    @endif
 
+    @if($widgetPrefs['recent_movements'] ?? true)
     <!-- Recent Movements -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <h2 class="text-base md:text-lg font-semibold mb-3">📊 Mutasi Terbaru</h2>
@@ -154,7 +196,9 @@
             Lihat Semua →
         </a>
     </div>
+    @endif
 
+    @if($widgetPrefs['items_by_category'] ?? true)
     <!-- Items by Category -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <h2 class="text-base md:text-lg font-semibold mb-3">📁 Per Kategori</h2>
@@ -167,7 +211,9 @@
             @endforeach
         </div>
     </div>
+    @endif
 
+    @if($widgetPrefs['items_by_location'] ?? true)
     <!-- Items by Location -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <h2 class="text-base md:text-lg font-semibold mb-3">📍 Per Lokasi</h2>
@@ -180,10 +226,10 @@
             @endforeach
         </div>
     </div>
+    @endif
 </div>
 
-<!-- Recent Scans Section -->
-@if($recentScans->count() > 0)
+@if(($widgetPrefs['recent_scans'] ?? true) && $recentScans->count() > 0)
 <div class="bg-white rounded-lg shadow p-3 md:p-4 mb-6 md:mb-8">
     <div class="flex justify-between items-center mb-3">
         <h2 class="text-base md:text-lg font-semibold">📷 Scan QR Terbaru</h2>
@@ -228,6 +274,7 @@
 </div>
 @endif
 
+@if($widgetPrefs['quick_actions'] ?? true)
 <!-- Quick Actions -->
 <div class="bg-white rounded-lg shadow p-3 md:p-4">
     <h2 class="text-base md:text-lg font-semibold mb-3">⚡ Aksi Cepat</h2>
@@ -245,6 +292,7 @@
         <a href="{{ route('export.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📥 Export</a>
     </div>
 </div>
+@endif
 @endsection
 
 @section('scripts')
@@ -252,7 +300,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Loan Trends Line Chart
-    const loanTrendsCtx = document.getElementById('loanTrendsChart').getContext('2d');
+    const loanTrendsEl = document.getElementById('loanTrendsChart');
+    if (loanTrendsEl) {
+    const loanTrendsCtx = loanTrendsEl.getContext('2d');
     new Chart(loanTrendsCtx, {
         type: 'line',
         data: {
@@ -294,9 +344,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    } // end loanTrends
 
     // Condition Pie Chart
-    const conditionCtx = document.getElementById('conditionChart').getContext('2d');
+    const conditionEl = document.getElementById('conditionChart');
+    if (conditionEl) {
+    const conditionCtx = conditionEl.getContext('2d');
     new Chart(conditionCtx, {
         type: 'doughnut',
         data: {
@@ -318,9 +371,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    } // end condition
 
     // Most Borrowed Items Bar Chart
-    const mostBorrowedCtx = document.getElementById('mostBorrowedChart').getContext('2d');
+    const mostBorrowedEl = document.getElementById('mostBorrowedChart');
+    if (mostBorrowedEl) {
+    const mostBorrowedCtx = mostBorrowedEl.getContext('2d');
     new Chart(mostBorrowedCtx, {
         type: 'bar',
         data: {
@@ -351,6 +407,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+    });
+    } // end mostBorrowed
+});
+
+function toggleWidgetSettings() {
+    const panel = document.getElementById('widget-settings');
+    panel.classList.toggle('hidden');
+}
+
+document.querySelectorAll('.widget-toggle').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const widgets = {};
+        document.querySelectorAll('.widget-toggle').forEach(cb => {
+            widgets[cb.dataset.widget] = cb.checked;
+        });
+
+        fetch('{{ route("dashboard.updateWidgets") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({ widgets: widgets }),
+        }).then(() => {
+            location.reload();
+        });
     });
 });
 </script>

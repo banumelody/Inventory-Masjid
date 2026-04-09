@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\ScanLog;
 use App\Models\Masjid;
 use App\Scopes\MasjidScope;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -129,6 +131,8 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        $widgetPrefs = auth()->user()->getWidgetPreferences();
+
         return view('dashboard.index', compact(
             'stats',
             'recentItems',
@@ -139,7 +143,8 @@ class DashboardController extends Controller
             'loanTrends',
             'mostBorrowedItems',
             'conditionStats',
-            'recentScans'
+            'recentScans',
+            'widgetPrefs'
         ));
     }
 
@@ -223,5 +228,19 @@ class DashboardController extends Controller
             ],
             'colors' => ['#22c55e', '#eab308', '#ef4444'],
         ];
+    }
+
+    public function updateWidgets(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'widgets' => 'required|array',
+            'widgets.*' => 'boolean',
+        ]);
+
+        $user = auth()->user();
+        $user->dashboard_widgets = $validated['widgets'];
+        $user->save();
+
+        return response()->json(['success' => true]);
     }
 }

@@ -20,6 +20,7 @@ class User extends Authenticatable implements CanResetPassword
         'role_id',
         'is_superadmin',
         'masjid_id',
+        'dashboard_widgets',
     ];
 
     protected $hidden = [
@@ -30,6 +31,7 @@ class User extends Authenticatable implements CanResetPassword
     protected $casts = [
         'password' => 'hashed',
         'is_superadmin' => 'boolean',
+        'dashboard_widgets' => 'array',
     ];
 
     public function role(): BelongsTo
@@ -45,6 +47,31 @@ class User extends Authenticatable implements CanResetPassword
     public function isSuperAdmin(): bool
     {
         return (bool) $this->is_superadmin;
+    }
+
+    public const DEFAULT_WIDGETS = [
+        'stats_overview' => true,
+        'charts' => true,
+        'most_borrowed' => true,
+        'condition_summary' => true,
+        'overdue_loans' => true,
+        'recent_items' => true,
+        'recent_movements' => true,
+        'items_by_category' => true,
+        'items_by_location' => true,
+        'recent_scans' => true,
+        'quick_actions' => true,
+    ];
+
+    public function getWidgetPreferences(): array
+    {
+        return array_merge(self::DEFAULT_WIDGETS, $this->dashboard_widgets ?? []);
+    }
+
+    public function isWidgetEnabled(string $widget): bool
+    {
+        $prefs = $this->getWidgetPreferences();
+        return $prefs[$widget] ?? true;
     }
 
     public function isAdmin(): bool
