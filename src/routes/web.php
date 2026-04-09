@@ -131,10 +131,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/stock-movements', [StockMovementController::class, 'store'])->name('stock-movements.store');
     });
 
-    // Export - All roles can export
-    Route::get('/export', [ExportController::class, 'index'])->name('export.index');
-    Route::get('/export/excel', [ExportController::class, 'excel'])->name('export.excel');
-    Route::get('/export/pdf', [ExportController::class, 'pdf'])->name('export.pdf');
+    // Export - All roles can export (needs masjid context)
+    Route::middleware('ensure.masjid.context')->group(function () {
+        Route::get('/export', [ExportController::class, 'index'])->name('export.index');
+        Route::get('/export/excel', [ExportController::class, 'excel'])->name('export.excel');
+        Route::get('/export/pdf', [ExportController::class, 'pdf'])->name('export.pdf');
+    });
 
     // Feedback - All roles can submit (needs masjid context)
     Route::middleware('ensure.masjid.context')->group(function () {
