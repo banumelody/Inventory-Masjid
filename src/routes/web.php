@@ -23,6 +23,7 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ScanLogController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MasjidController;
+use App\Http\Controllers\ProfileController;
 
 // Welcome page for guests
 Route::get('/', function () {
@@ -60,6 +61,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // QR Code Scanner (all authenticated users)
     Route::get('/scan', [QrCodeController::class, 'scanPage'])->name('qrcode.scan');

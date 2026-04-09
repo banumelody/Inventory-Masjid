@@ -269,13 +269,15 @@
             <!-- User Info (Floating at bottom) -->
             <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 <div class="flex items-center gap-3 px-2">
-                    <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-700 truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-gray-500">{{ auth()->user()->role->display_name }}</p>
-                    </div>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80" title="Edit Profil">
+                        <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-700 truncate">{{ auth()->user()->name }}</p>
+                            <p class="text-xs text-gray-500">{{ auth()->user()->role->display_name }}</p>
+                        </div>
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50" title="Logout">
