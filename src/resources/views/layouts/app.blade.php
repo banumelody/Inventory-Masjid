@@ -134,23 +134,23 @@
                     <div class="space-y-1">
                         <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <span class="text-lg">📊</span>
-                            <span>Dashboard</span>
+                            <span>{{ __('ui.dashboard') }}</span>
                         </a>
                         <a href="{{ route('items.index') }}" class="sidebar-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
                             <span class="text-lg">📦</span>
-                            <span>Inventaris</span>
+                            <span>{{ __('ui.items') }}</span>
                         </a>
                         <a href="{{ route('loans.index') }}" class="sidebar-link {{ request()->routeIs('loans.*') && !request()->routeIs('loans.scan-return') ? 'active' : '' }}">
                             <span class="text-lg">📤</span>
-                            <span>Peminjaman</span>
+                            <span>{{ __('ui.loans') }}</span>
                         </a>
                         <a href="{{ route('stock-movements.index') }}" class="sidebar-link {{ request()->routeIs('stock-movements.*') ? 'active' : '' }}">
                             <span class="text-lg">📊</span>
-                            <span>Mutasi Stok</span>
+                            <span>{{ __('ui.stock_movements') }}</span>
                         </a>
                         <a href="{{ route('maintenances.index') }}" class="sidebar-link {{ request()->routeIs('maintenances.*') ? 'active' : '' }}">
                             <span class="text-lg">🔧</span>
-                            <span>Maintenance</span>
+                            <span>{{ __('ui.maintenances') }}</span>
                         </a>
                     </div>
                 </div>
@@ -182,26 +182,26 @@
                     <div class="space-y-1">
                         <a href="{{ route('categories.index') }}" class="sidebar-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                             <span class="text-lg">📁</span>
-                            <span>Kategori</span>
+                            <span>{{ __('ui.categories') }}</span>
                         </a>
                         <a href="{{ route('locations.index') }}" class="sidebar-link {{ request()->routeIs('locations.*') ? 'active' : '' }}">
                             <span class="text-lg">📍</span>
-                            <span>Lokasi</span>
+                            <span>{{ __('ui.locations') }}</span>
                         </a>
                     </div>
                 </div>
 
                 <!-- Reports -->
                 <div>
-                    <p class="sidebar-group-title">Laporan</p>
+                    <p class="sidebar-group-title">{{ __('ui.reports') }}</p>
                     <div class="space-y-1">
                         <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                             <span class="text-lg">📋</span>
-                            <span>Laporan</span>
+                            <span>{{ __('ui.reports') }}</span>
                         </a>
                         <a href="{{ route('export.index') }}" class="sidebar-link {{ request()->routeIs('export.*') ? 'active' : '' }}">
                             <span class="text-lg">📥</span>
-                            <span>Export Data</span>
+                            <span>{{ __('ui.export') }}</span>
                         </a>
                     </div>
                 </div>
@@ -213,33 +213,33 @@
                     <div class="space-y-1">
                         <a href="{{ route('imports.index') }}" class="sidebar-link {{ request()->routeIs('imports.*') ? 'active' : '' }}">
                             <span class="text-lg">📤</span>
-                            <span>Import Data</span>
+                            <span>{{ __('ui.imports') }}</span>
                         </a>
                         <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                             <span class="text-lg">👥</span>
-                            <span>Pengguna</span>
+                            <span>{{ __('ui.users') }}</span>
                         </a>
                         @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('backups.index') }}" class="sidebar-link {{ request()->routeIs('backups.*') ? 'active' : '' }}">
                             <span class="text-lg">💾</span>
-                            <span>Backup</span>
+                            <span>{{ __('ui.backups') }}</span>
                         </a>
                         @endif
                         <a href="{{ route('activity-logs.index') }}" class="sidebar-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}">
                             <span class="text-lg">📜</span>
-                            <span>Activity Log</span>
+                            <span>{{ __('ui.activity_logs') }}</span>
                         </a>
                         <a href="{{ route('scan-logs.index') }}" class="sidebar-link {{ request()->routeIs('scan-logs.*') ? 'active' : '' }}">
                             <span class="text-lg">📷</span>
-                            <span>Scan Logs</span>
+                            <span>{{ __('ui.scan_logs') }}</span>
                         </a>
                         <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                             <span class="text-lg">⚙️</span>
-                            <span>Pengaturan</span>
+                            <span>{{ __('ui.settings') }}</span>
                         </a>
                         <a href="{{ route('feedbacks.index') }}" class="sidebar-link {{ request()->routeIs('feedbacks.index') ? 'active' : '' }}">
                             <span class="text-lg">💬</span>
-                            <span>Feedback</span>
+                            <span>{{ __('ui.feedbacks') }}</span>
                         </a>
                     </div>
                 </div>
@@ -251,11 +251,11 @@
                     <div class="space-y-1">
                         <a href="{{ route('help.guide') }}" class="sidebar-link {{ request()->routeIs('help.guide') ? 'active' : '' }}">
                             <span class="text-lg">📖</span>
-                            <span>Panduan</span>
+                            <span>{{ __('ui.guide') }}</span>
                         </a>
                         <a href="{{ route('notifications.index') }}" class="sidebar-link {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
                             <span class="text-lg">🔔</span>
-                            <span>Notifikasi</span>
+                            <span>{{ __('ui.notifications') }}</span>
                             <span id="notif-badge-sidebar" class="hidden ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"></span>
                         </a>
                         <a href="{{ route('help.faq') }}" class="sidebar-link {{ request()->routeIs('help.faq') ? 'active' : '' }}">
@@ -264,8 +264,19 @@
                         </a>
                         <a href="{{ route('about') }}" class="sidebar-link {{ request()->routeIs('about') ? 'active' : '' }}">
                             <span class="text-lg">ℹ️</span>
-                            <span>Tentang</span>
+                            <span>{{ __('ui.about') }}</span>
                         </a>
+                        <div class="flex items-center gap-1 px-3 py-1.5">
+                            <span class="text-lg">🌐</span>
+                            <form action="{{ route('language.switch', 'id') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-xs px-2 py-1 rounded {{ app()->getLocale() === 'id' ? 'bg-green-100 text-green-800 font-bold' : 'text-gray-500 hover:text-gray-700' }}">ID</button>
+                            </form>
+                            <form action="{{ route('language.switch', 'en') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-xs px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-blue-100 text-blue-800 font-bold' : 'text-gray-500 hover:text-gray-700' }}">EN</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 </nav>

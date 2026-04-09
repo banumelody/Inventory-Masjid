@@ -27,6 +27,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\NotificationController;
 
+// Language switcher
+Route::post('/language/{locale}', function (string $locale) {
+    if (in_array($locale, ['id', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('language.switch');
+
 // Welcome page for guests
 Route::get('/', function () {
     if (auth()->check()) {

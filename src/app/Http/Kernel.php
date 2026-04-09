@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\SetMasjidContext::class,
+            \App\Http\Middleware\SetLocale::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
