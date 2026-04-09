@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/items', [ItemController::class, 'index'])->name('items.index');
     
     // Items - Admin & Operator only (MUST be before {item} route)
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
         Route::post('/items', [ItemController::class, 'store'])->name('items.store');
         Route::get('/items/{item}/edit', [ItemController::class, 'edit'])->name('items.edit');
@@ -89,16 +89,16 @@ Route::middleware('auth')->group(function () {
     // Items - Admin only delete
     Route::delete('/items/{item}', [ItemController::class, 'destroy'])
         ->name('items.destroy')
-        ->middleware('role:admin');
+        ->middleware(['role:admin', 'ensure.masjid.context']);
 
     // Categories - Admin & Operator can manage
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::resource('categories', CategoryController::class)->except(['show']);
     });
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
     // Locations - Admin & Operator can manage
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::resource('locations', LocationController::class)->except(['show', 'index']);
     });
     Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
@@ -109,7 +109,7 @@ Route::middleware('auth')->group(function () {
 
     // Loans - Admin & Operator can manage
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::get('/loans/scan-return', [LoanController::class, 'scanReturnPage'])->name('loans.scan-return');
         Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
         Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
     // Stock Movements - Admin & Operator can manage
     Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
     Route::get('/stock-movements/item/{item}', [StockMovementController::class, 'itemHistory'])->name('stock-movements.item');
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::get('/stock-movements/create', [StockMovementController::class, 'create'])->name('stock-movements.create');
         Route::post('/stock-movements', [StockMovementController::class, 'store'])->name('stock-movements.store');
     });
@@ -136,24 +136,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/excel', [ExportController::class, 'excel'])->name('export.excel');
     Route::get('/export/pdf', [ExportController::class, 'pdf'])->name('export.pdf');
 
-    // Feedback - All roles can submit
-    Route::get('/feedbacks/create', [FeedbackController::class, 'create'])->name('feedbacks.create');
-    Route::post('/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+    // Feedback - All roles can submit (needs masjid context)
+    Route::middleware('ensure.masjid.context')->group(function () {
+        Route::get('/feedbacks/create', [FeedbackController::class, 'create'])->name('feedbacks.create');
+        Route::post('/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+    });
     
     // Feedback management - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/feedbacks', [FeedbackController::class, 'index'])->name('feedbacks.index');
         Route::put('/feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
         Route::delete('/feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
     });
 
     // Users - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
     });
 
     // Backups - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
         Route::post('/backups', [BackupController::class, 'create'])->name('backups.create');
         Route::get('/backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
@@ -162,7 +164,7 @@ Route::middleware('auth')->group(function () {
 
     // Maintenances - Admin & Operator can manage
     Route::get('/maintenances', [MaintenanceController::class, 'index'])->name('maintenances.index');
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::get('/maintenances/create', [MaintenanceController::class, 'create'])->name('maintenances.create');
         Route::post('/maintenances', [MaintenanceController::class, 'store'])->name('maintenances.store');
         Route::get('/maintenances/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenances.show');
@@ -179,7 +181,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Import - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/imports', [ImportController::class, 'index'])->name('imports.index');
         Route::get('/imports/create', [ImportController::class, 'create'])->name('imports.create');
         Route::post('/imports/preview', [ImportController::class, 'preview'])->name('imports.preview');
@@ -189,26 +191,26 @@ Route::middleware('auth')->group(function () {
     });
 
     // Activity Logs - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 
     // Scan Logs - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/scan-logs', [ScanLogController::class, 'index'])->name('scan-logs.index');
         Route::get('/scan-logs/export', [ScanLogController::class, 'export'])->name('scan-logs.export');
         Route::get('/scan-logs/{scanLog}', [ScanLogController::class, 'show'])->name('scan-logs.show');
     });
 
     // Audit Scan - Admin & Operator
-    Route::middleware('role:admin,operator')->group(function () {
+    Route::middleware(['role:admin,operator', 'ensure.masjid.context'])->group(function () {
         Route::get('/scan/audit', [QrCodeController::class, 'auditScanPage'])->name('qrcode.audit-scan');
         Route::post('/i/{qrKey}/audit', [QrCodeController::class, 'handleScanWithPurpose'])->name('qrcode.scan-with-purpose');
     });
 
     // Settings - Admin only
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     });

@@ -177,20 +177,28 @@ class MultiTenantIsolationTest extends TestCase
     /** @test */
     public function superadmin_can_access_admin_routes()
     {
-        $response = $this->actingAs($this->superadmin)->get(route('users.index'));
+        $response = $this->actingAs($this->superadmin)
+            ->withSession(['current_masjid_id' => $this->masjidA->id])
+            ->get(route('users.index'));
         $response->assertStatus(200);
     }
 
     /** @test */
     public function superadmin_bypasses_role_check()
     {
-        $response = $this->actingAs($this->superadmin)->get(route('backups.index'));
+        $response = $this->actingAs($this->superadmin)
+            ->withSession(['current_masjid_id' => $this->masjidA->id])
+            ->get(route('backups.index'));
         $response->assertStatus(200);
 
-        $response = $this->actingAs($this->superadmin)->get(route('settings.index'));
+        $response = $this->actingAs($this->superadmin)
+            ->withSession(['current_masjid_id' => $this->masjidA->id])
+            ->get(route('settings.index'));
         $response->assertStatus(200);
 
-        $response = $this->actingAs($this->superadmin)->get(route('activity-logs.index'));
+        $response = $this->actingAs($this->superadmin)
+            ->withSession(['current_masjid_id' => $this->masjidA->id])
+            ->get(route('activity-logs.index'));
         $response->assertStatus(200);
     }
 

@@ -29,6 +29,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'role' => \App\Http\Middleware\CheckRole::class,
         'superadmin' => \App\Http\Middleware\EnsureSuperAdmin::class,
+        'ensure.masjid.context' => \App\Http\Middleware\EnsureMasjidContext::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
 }

@@ -446,4 +446,69 @@ class SuperadminFeatureTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Dashboard Superadmin');
     }
+
+    // --- P0-2: Orphan Record Guard ---
+
+    public function test_superadmin_without_context_redirected_from_create_routes()
+    {
+        $createRoutes = [
+            '/items/create',
+            '/categories/create',
+            '/locations/create',
+            '/loans/create',
+            '/stock-movements/create',
+            '/maintenances/create',
+            '/imports',
+            '/users',
+            '/settings',
+            '/backups',
+            '/activity-logs',
+            '/scan-logs',
+            '/feedbacks/create',
+        ];
+
+        foreach ($createRoutes as $route) {
+            $response = $this->actingAs($this->superadmin)->get($route);
+            $response->assertRedirect(route('dashboard'), "Route $route should redirect superadmin without context");
+        }
+    }
+
+    public function test_superadmin_with_context_can_access_create_routes()
+    {
+        $catA = Category::create(['name' => 'Cat A', 'masjid_id' => $this->masjidA->id]);
+        $locA = Location::create(['name' => 'Loc A', 'masjid_id' => $this->masjidA->id]);
+
+        $routesThatShouldWork = [
+            '/items/create',
+            '/categories/create',
+            '/locations/create',
+            '/maintenances/create',
+        ];
+
+        foreach ($routesThatShouldWork as $route) {
+            $response = $this->actingAs($this->superadmin)
+                ->withSession(['current_masjid_id' => $this->masjidA->id])
+                ->get($route);
+            $response->assertStatus(200, "Route $route should work for superadmin with context");
+        }
+    }
+
+    public function test_regular_admin_not_affected_by_context_middleware()
+    {
+        $catA = Category::create(['name' => 'Cat A', 'masjid_id' => $this->masjidA->id]);
+        $locA = Location::create(['name' => 'Loc A', 'masjid_id' => $this->masjidA->id]);
+
+        $response = $this->actingAs($this->adminA)->get('/items/create');
+        $response->assertStatus(200);
+
+        $response = $this->actingAs($this->adminA)->get('/categories/create');
+        $response->assertStatus(200);
+    }
+
+    public function test_belongs_to_masjid_trait_sets_context_automatically()
+    {
+        app()->instance('current_masjid_id', $this->masjidA->id);
+        $category = Category::create(['name' => 'Auto Context Category']);
+        $this->assertEquals($this->masjidA->id, $category->masjid_id);
+    }
 }
