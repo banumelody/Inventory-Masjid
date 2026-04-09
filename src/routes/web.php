@@ -24,6 +24,7 @@ use App\Http\Controllers\ScanLogController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MasjidController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegistrationController;
 
 // Welcome page for guests
 Route::get('/', function () {
@@ -47,6 +48,10 @@ Route::get('/loans/return-scan/{qrKey}', [LoanController::class, 'handleScanRetu
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // Masjid self-registration
+    Route::get('/register', [RegistrationController::class, 'create'])->name('register');
+    Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
     
     // Password Reset Routes
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');

@@ -73,7 +73,12 @@
                     Login
                 </button>
             </form>
-        </div>
+
+            <div class="text-center mt-4">
+                <p class="text-sm text-gray-500">Belum terdaftar?
+                    <a href="{{ route('register') }}" class="text-green-600 hover:text-green-800 font-semibold">Daftarkan Masjid Anda</a>
+                </p>
+            </div>
 
         <div class="flex justify-center gap-4 mt-6 text-sm">
             <a href="{{ route('help.guide') }}" class="text-green-600 hover:text-green-800">📖 Panduan</a>
