@@ -292,11 +292,16 @@ class ImportController extends Controller
             return ['success' => false, 'error' => $validator->errors()->first()];
         }
 
-        // Find or create category
-        $category = Category::firstOrCreate(['name' => $data['kategori']]);
+        // Find or create category (scoped to current masjid)
+        $masjidId = app()->bound('current_masjid_id') ? app('current_masjid_id') : null;
+        $category = Category::firstOrCreate(
+            ['name' => $data['kategori'], 'masjid_id' => $masjidId]
+        );
 
-        // Find or create location
-        $location = Location::firstOrCreate(['name' => $data['lokasi']]);
+        // Find or create location (scoped to current masjid)
+        $location = Location::firstOrCreate(
+            ['name' => $data['lokasi'], 'masjid_id' => $masjidId]
+        );
 
         // Map condition
         $condition = 'baik';
