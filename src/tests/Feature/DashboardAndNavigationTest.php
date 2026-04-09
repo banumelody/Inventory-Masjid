@@ -73,10 +73,11 @@ class DashboardAndNavigationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_backups_page_loads_for_admin(): void
+    public function test_backups_page_restricted_to_superadmin(): void
     {
+        // Regular admin should get 403
         $response = $this->actingAs($this->admin)->get(route('backups.index'));
-        $response->assertStatus(200);
+        $response->assertStatus(403);
     }
 
     public function test_activity_logs_page_loads(): void

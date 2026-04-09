@@ -156,8 +156,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
     });
 
-    // Backups - Admin only
-    Route::middleware(['role:admin', 'ensure.masjid.context'])->group(function () {
+    // Backups - Superadmin only (full database dump)
+    Route::middleware(['superadmin'])->group(function () {
         Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
         Route::post('/backups', [BackupController::class, 'create'])->name('backups.create');
         Route::get('/backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');

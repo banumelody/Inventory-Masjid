@@ -219,10 +219,12 @@
                             <span class="text-lg">👥</span>
                             <span>Pengguna</span>
                         </a>
+                        @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('backups.index') }}" class="sidebar-link {{ request()->routeIs('backups.*') ? 'active' : '' }}">
                             <span class="text-lg">💾</span>
                             <span>Backup</span>
                         </a>
+                        @endif
                         <a href="{{ route('activity-logs.index') }}" class="sidebar-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}">
                             <span class="text-lg">📜</span>
                             <span>Activity Log</span>

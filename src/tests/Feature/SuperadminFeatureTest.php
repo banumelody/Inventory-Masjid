@@ -461,7 +461,6 @@ class SuperadminFeatureTest extends TestCase
             '/imports',
             '/users',
             '/settings',
-            '/backups',
             '/feedbacks/create',
         ];
 
@@ -529,5 +528,19 @@ class SuperadminFeatureTest extends TestCase
         $this->assertDatabaseMissing('categories', ['masjid_id' => $this->masjidA->id]);
         $this->assertDatabaseMissing('items', ['masjid_id' => $this->masjidA->id]);
         $this->assertDatabaseMissing('users', ['masjid_id' => $this->masjidA->id]);
+    }
+
+    // --- P2-15: Backup restricted to superadmin ---
+
+    public function test_regular_admin_blocked_from_backups()
+    {
+        $response = $this->actingAs($this->adminA)->get('/backups');
+        $response->assertStatus(403);
+    }
+
+    public function test_superadmin_can_access_backups()
+    {
+        $response = $this->actingAs($this->superadmin)->get('/backups');
+        $response->assertStatus(200);
     }
 }
