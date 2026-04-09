@@ -64,32 +64,32 @@ class User extends Authenticatable implements CanResetPassword
 
     public function canManageUsers(): bool
     {
-        return $this->isAdmin();
+        return $this->isSuperAdmin() || $this->isAdmin();
     }
 
     public function canDeleteItems(): bool
     {
-        return $this->isAdmin();
+        return $this->isSuperAdmin() || $this->isAdmin();
     }
 
     public function canManageBackups(): bool
     {
-        return $this->isAdmin();
+        return $this->isSuperAdmin() || $this->isAdmin();
     }
 
     public function canEditItems(): bool
     {
-        return $this->isAdmin() || $this->isOperator();
+        return $this->isSuperAdmin() || $this->isAdmin() || $this->isOperator();
     }
 
     public function canManageLoans(): bool
     {
-        return $this->isAdmin() || $this->isOperator();
+        return $this->isSuperAdmin() || $this->isAdmin() || $this->isOperator();
     }
 
     public function canManageStock(): bool
     {
-        return $this->isAdmin() || $this->isOperator();
+        return $this->isSuperAdmin() || $this->isAdmin() || $this->isOperator();
     }
 
     /**

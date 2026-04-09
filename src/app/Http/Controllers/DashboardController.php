@@ -9,6 +9,8 @@ use App\Models\Location;
 use App\Models\StockMovement;
 use App\Models\User;
 use App\Models\ScanLog;
+use App\Models\Masjid;
+use App\Scopes\MasjidScope;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -16,6 +18,49 @@ use Carbon\Carbon;
 class DashboardController extends Controller
 {
     public function index(): View
+    {
+        $user = auth()->user();
+
+        // Superadmin without masjid context → show platform overview
+        if ($user->isSuperAdmin() && !session('current_masjid_id')) {
+            return $this->superadminDashboard();
+        }
+
+        // Regular dashboard (scoped by MasjidScope)
+        return $this->tenantDashboard();
+    }
+
+    private function superadminDashboard(): View
+    {
+        $stats = [
+            'total_masjids' => Masjid::count(),
+            'active_masjids' => Masjid::where('status', 'active')->count(),
+            'total_items' => Item::withoutGlobalScope(MasjidScope::class)->count(),
+            'total_quantity' => Item::withoutGlobalScope(MasjidScope::class)->sum('quantity'),
+            'total_users' => User::where('is_superadmin', false)->count(),
+            'total_loans' => Loan::withoutGlobalScope(MasjidScope::class)->count(),
+            'active_loans' => Loan::withoutGlobalScope(MasjidScope::class)->whereNull('returned_at')->count(),
+            'overdue_loans' => Loan::withoutGlobalScope(MasjidScope::class)
+                ->whereNull('returned_at')
+                ->whereNotNull('due_at')
+                ->where('due_at', '<', now())
+                ->count(),
+        ];
+
+        $masjids = Masjid::withCount([
+            'users',
+            'items',
+            'loans as active_loans_count' => function ($q) {
+                $q->whereNull('returned_at');
+            },
+        ])->orderBy('name')->limit(10)->get();
+
+        $recentMasjids = Masjid::orderBy('created_at', 'desc')->limit(5)->get();
+
+        return view('dashboard.superadmin', compact('stats', 'masjids', 'recentMasjids'));
+    }
+
+    private function tenantDashboard(): View
     {
         // Summary stats
         $stats = [

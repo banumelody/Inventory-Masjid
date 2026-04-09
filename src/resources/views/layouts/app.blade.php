@@ -99,6 +99,35 @@
 
                 <!-- Navigation -->
                 <nav class="flex-1 px-3 py-4 pb-20 space-y-6 overflow-y-auto sidebar-nav">
+
+                @if(auth()->user()->isSuperAdmin())
+                <!-- Tenant Switcher -->
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <p class="text-xs font-semibold text-gray-400 uppercase mb-2">Konteks Masjid</p>
+                    <form action="{{ route('masjids.switch') }}" method="POST" id="tenant-switch-form">
+                        @csrf
+                        <select name="masjid_id" onchange="document.getElementById('tenant-switch-form').submit()"
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="all" {{ !session('current_masjid_id') ? 'selected' : '' }}>🌐 Semua Masjid</option>
+                            @foreach(\App\Models\Masjid::orderBy('name')->get() as $m)
+                                <option value="{{ $m->id }}" {{ session('current_masjid_id') == $m->id ? 'selected' : '' }}>🕌 {{ $m->name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Superadmin Menu -->
+                <div>
+                    <p class="sidebar-group-title">Superadmin</p>
+                    <div class="space-y-1">
+                        <a href="{{ route('masjids.index') }}" class="sidebar-link {{ request()->routeIs('masjids.*') ? 'active' : '' }}">
+                            <span class="text-lg">🕌</span>
+                            <span>Kelola Masjid</span>
+                        </a>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Main Menu -->
                 <div>
                     <p class="sidebar-group-title">Menu Utama</p>

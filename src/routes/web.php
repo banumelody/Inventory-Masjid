@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ScanLogController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\MasjidController;
 
 // Welcome page for guests
 Route::get('/', function () {
@@ -210,6 +211,17 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    });
+
+    // Superadmin - Masjid management
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/masjids', [MasjidController::class, 'index'])->name('masjids.index');
+        Route::get('/masjids/create', [MasjidController::class, 'create'])->name('masjids.create');
+        Route::post('/masjids', [MasjidController::class, 'store'])->name('masjids.store');
+        Route::get('/masjids/{masjid}', [MasjidController::class, 'show'])->name('masjids.show');
+        Route::get('/masjids/{masjid}/edit', [MasjidController::class, 'edit'])->name('masjids.edit');
+        Route::put('/masjids/{masjid}', [MasjidController::class, 'update'])->name('masjids.update');
+        Route::post('/masjids/switch', [MasjidController::class, 'switchContext'])->name('masjids.switch');
     });
 
     // About page - All authenticated users
