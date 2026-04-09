@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Storage;
 
 class MaintenancePhoto extends Model
 {
+    use \App\Traits\BelongsToMasjid;
+
     protected $fillable = [
         'maintenance_id',
         'filename',
@@ -15,6 +17,7 @@ class MaintenancePhoto extends Model
         'type',
         'caption',
         'uploaded_by',
+        'masjid_id',
     ];
 
     public function maintenance(): BelongsTo

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ImportLog extends Model
 {
+    use \App\Traits\BelongsToMasjid;
+
     protected $fillable = [
         'user_id',
         'filename',
@@ -16,6 +18,7 @@ class ImportLog extends Model
         'failed_rows',
         'errors',
         'status',
+        'masjid_id',
     ];
 
     protected $casts = [

@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\BelongsToMasjid;
 
 class Feedback extends Model
 {
+    use BelongsToMasjid;
+
     protected $table = 'feedbacks';
 
     protected $fillable = [
@@ -16,6 +19,7 @@ class Feedback extends Model
         'message',
         'status',
         'admin_notes',
+        'masjid_id',
     ];
 
     public function user(): BelongsTo

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Loan;
 use App\Models\Item;
 use App\Models\ActivityLog;
+use App\Scopes\MasjidScope;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -147,7 +148,7 @@ class LoanController extends Controller
      */
     public function handleScanReturn(string $qrKey): RedirectResponse
     {
-        $loan = Loan::where('return_qr_key', $qrKey)->first();
+        $loan = Loan::withoutGlobalScope(MasjidScope::class)->where('return_qr_key', $qrKey)->first();
 
         if (!$loan) {
             return redirect()->route('loans.scan-return')
@@ -167,7 +168,7 @@ class LoanController extends Controller
      */
     public function quickReturn(Request $request, string $qrKey): RedirectResponse
     {
-        $loan = Loan::where('return_qr_key', $qrKey)->first();
+        $loan = Loan::withoutGlobalScope(MasjidScope::class)->where('return_qr_key', $qrKey)->first();
 
         if (!$loan) {
             return redirect()->route('loans.scan-return')

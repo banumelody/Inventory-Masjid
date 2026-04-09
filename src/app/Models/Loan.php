@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\BelongsToMasjid;
 
 class Loan extends Model
 {
+    use BelongsToMasjid;
+
     protected $fillable = [
         'item_id',
         'borrower_name',
@@ -18,6 +21,7 @@ class Loan extends Model
         'returned_condition',
         'notes',
         'return_qr_key',
+        'masjid_id',
     ];
 
     protected $casts = [

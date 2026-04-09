@@ -15,6 +15,12 @@ class CheckRole
         }
 
         $user = auth()->user();
+
+        // Superadmin bypasses all role checks
+        if ($user->is_superadmin) {
+            return $next($request);
+        }
+
         $userRole = $user->role->name;
 
         if (!in_array($userRole, $roles)) {

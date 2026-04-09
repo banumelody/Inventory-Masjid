@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\BelongsToMasjid;
 
 class Item extends Model
 {
+    use BelongsToMasjid;
+
     protected $fillable = [
         'name',
         'category_id',
@@ -18,6 +21,7 @@ class Item extends Model
         'note',
         'photo_path',
         'qr_code_key',
+        'masjid_id',
     ];
 
     public function category(): BelongsTo

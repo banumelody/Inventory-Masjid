@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActivityLog extends Model
 {
+    use \App\Traits\BelongsToMasjid;
+
     protected $fillable = [
         'user_id',
         'action',
@@ -17,6 +19,7 @@ class ActivityLog extends Model
         'new_values',
         'ip_address',
         'user_agent',
+        'masjid_id',
     ];
 
     protected $casts = [

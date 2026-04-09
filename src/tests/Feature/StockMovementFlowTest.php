@@ -22,14 +22,19 @@ class StockMovementFlowTest extends TestCase
     {
         parent::setUp();
         
-        $adminRole = Role::create(['name' => 'admin', 'display_name' => 'Administrator']);
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'admin'],
+            ['display_name' => 'Administrator']
+        );
         
-        $this->admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
-            'role_id' => $adminRole->id,
-        ]);
+        $this->admin = User::firstOrCreate(
+            ['email' => 'admin@test.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+                'role_id' => $adminRole->id,
+            ]
+        );
         
         $category = Category::create(['name' => 'Test Category']);
         $location = Location::create(['name' => 'Test Location']);

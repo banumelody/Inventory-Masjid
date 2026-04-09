@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use App\Traits\BelongsToMasjid;
 
 class Setting extends Model
 {
+    use BelongsToMasjid;
+
     protected $fillable = [
         'key',
         'value',
@@ -15,32 +18,55 @@ class Setting extends Model
         'label',
         'description',
         'sort_order',
+        'masjid_id',
     ];
 
     /**
-     * Get a setting value by key
+     * Get the current masjid_id for cache key scoping
+     */
+    protected static function currentMasjidId(): ?int
+    {
+        return app()->bound('current_masjid_id') ? app('current_masjid_id') : null;
+    }
+
+    /**
+     * Get a setting value by key (tenant-scoped)
      */
     public static function get(string $key, $default = null)
     {
-        $setting = Cache::rememberForever("setting.{$key}", function () use ($key) {
-            return static::where('key', $key)->first();
+        $masjidId = static::currentMasjidId();
+        $cacheKey = $masjidId ? "setting.{$masjidId}.{$key}" : "setting.global.{$key}";
+
+        $setting = Cache::rememberForever($cacheKey, function () use ($key, $masjidId) {
+            $query = static::withoutGlobalScopes()->where('key', $key);
+            if ($masjidId) {
+                $query->where('masjid_id', $masjidId);
+            } else {
+                $query->whereNull('masjid_id');
+            }
+            return $query->first();
         });
 
         return $setting?->value ?? $default;
     }
 
     /**
-     * Set a setting value
+     * Set a setting value (tenant-scoped)
      */
     public static function set(string $key, $value): void
     {
-        static::updateOrCreate(
-            ['key' => $key],
+        $masjidId = static::currentMasjidId();
+
+        static::withoutGlobalScopes()->updateOrCreate(
+            ['key' => $key, 'masjid_id' => $masjidId],
             ['value' => $value]
         );
 
-        Cache::forget("setting.{$key}");
-        Cache::forget('settings.all');
+        $cacheKey = $masjidId ? "setting.{$masjidId}.{$key}" : "setting.global.{$key}";
+        Cache::forget($cacheKey);
+
+        $allKey = $masjidId ? "settings.all.{$masjidId}" : 'settings.all.global';
+        Cache::forget($allKey);
     }
 
     /**
@@ -48,8 +74,17 @@ class Setting extends Model
      */
     public static function getAllAsArray(): array
     {
-        return Cache::rememberForever('settings.all', function () {
-            return static::pluck('value', 'key')->toArray();
+        $masjidId = static::currentMasjidId();
+        $cacheKey = $masjidId ? "settings.all.{$masjidId}" : 'settings.all.global';
+
+        return Cache::rememberForever($cacheKey, function () use ($masjidId) {
+            $query = static::withoutGlobalScopes();
+            if ($masjidId) {
+                $query->where('masjid_id', $masjidId);
+            } else {
+                $query->whereNull('masjid_id');
+            }
+            return $query->pluck('value', 'key')->toArray();
         });
     }
 
@@ -68,11 +103,15 @@ class Setting extends Model
      */
     public static function clearCache(): void
     {
-        $settings = static::all();
+        $settings = static::withoutGlobalScopes()->all();
         foreach ($settings as $setting) {
-            Cache::forget("setting.{$setting->key}");
+            $mid = $setting->masjid_id;
+            $cacheKey = $mid ? "setting.{$mid}.{$setting->key}" : "setting.global.{$setting->key}";
+            Cache::forget($cacheKey);
+
+            $allKey = $mid ? "settings.all.{$mid}" : 'settings.all.global';
+            Cache::forget($allKey);
         }
-        Cache::forget('settings.all');
     }
 
     /**

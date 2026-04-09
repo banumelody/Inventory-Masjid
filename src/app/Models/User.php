@@ -18,6 +18,8 @@ class User extends Authenticatable implements CanResetPassword
         'email',
         'password',
         'role_id',
+        'is_superadmin',
+        'masjid_id',
     ];
 
     protected $hidden = [
@@ -27,11 +29,22 @@ class User extends Authenticatable implements CanResetPassword
 
     protected $casts = [
         'password' => 'hashed',
+        'is_superadmin' => 'boolean',
     ];
 
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function masjid(): BelongsTo
+    {
+        return $this->belongsTo(Masjid::class);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_superadmin;
     }
 
     public function isAdmin(): bool

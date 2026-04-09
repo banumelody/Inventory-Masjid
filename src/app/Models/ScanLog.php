@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScanLog extends Model
 {
+    use \App\Traits\BelongsToMasjid;
+
     protected $fillable = [
         'item_id',
         'user_id',
@@ -14,6 +16,7 @@ class ScanLog extends Model
         'purpose',
         'notes',
         'ip_address',
+        'masjid_id',
     ];
 
     /**

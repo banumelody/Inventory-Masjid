@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\ScanLog;
+use App\Scopes\MasjidScope;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -100,7 +101,7 @@ class QrCodeController extends Controller
      */
     public function handleScan(Request $request, string $qrKey): RedirectResponse
     {
-        $item = Item::where('qr_code_key', $qrKey)->first();
+        $item = Item::withoutGlobalScope(MasjidScope::class)->where('qr_code_key', $qrKey)->first();
 
         if (!$item) {
             return redirect()->route('qrcode.scan')
@@ -115,6 +116,7 @@ class QrCodeController extends Controller
             'purpose' => $request->input('purpose'),
             'notes' => $request->input('notes'),
             'ip_address' => $request->ip(),
+            'masjid_id' => $item->masjid_id,
         ]);
 
         return redirect()->route('items.show', $item)
@@ -131,7 +133,7 @@ class QrCodeController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        $item = Item::where('qr_code_key', $qrKey)->first();
+        $item = Item::withoutGlobalScope(MasjidScope::class)->where('qr_code_key', $qrKey)->first();
 
         if (!$item) {
             return redirect()->route('qrcode.scan')
@@ -139,13 +141,14 @@ class QrCodeController extends Controller
         }
 
         // Log scan with purpose
-        ScanLog::create([
+        ScanLog::withoutGlobalScopes()->create([
             'item_id' => $item->id,
             'user_id' => auth()->id(),
             'scanned_at' => now(),
             'purpose' => $validated['purpose'],
             'notes' => $validated['notes'] ?? null,
             'ip_address' => $request->ip(),
+            'masjid_id' => $item->masjid_id,
         ]);
 
         return redirect()->route('items.show', $item)

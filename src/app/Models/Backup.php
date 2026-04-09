@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Backup extends Model
 {
+    use \App\Traits\BelongsToMasjid;
+
     protected $fillable = [
         'filename',
         'path',
         'size',
+        'masjid_id',
     ];
 
     public function getSizeFormattedAttribute(): string

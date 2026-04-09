@@ -22,16 +22,21 @@ class LoanFlowTest extends TestCase
     {
         parent::setUp();
         
-        // Create roles
-        $adminRole = Role::create(['name' => 'admin', 'display_name' => 'Administrator']);
+        // Get or create admin role (migration seeds default roles)
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'admin'],
+            ['display_name' => 'Administrator']
+        );
         
         // Create admin user
-        $this->admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
-            'role_id' => $adminRole->id,
-        ]);
+        $this->admin = User::firstOrCreate(
+            ['email' => 'admin@test.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+                'role_id' => $adminRole->id,
+            ]
+        );
         
         // Create item
         $category = Category::create(['name' => 'Test Category']);
