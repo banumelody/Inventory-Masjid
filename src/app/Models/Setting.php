@@ -89,13 +89,20 @@ class Setting extends Model
     }
 
     /**
-     * Get settings by group
+     * Get settings by group (tenant-scoped)
      */
     public static function getByGroup(string $group)
     {
-        return static::where('group', $group)
-            ->orderBy('sort_order')
-            ->get();
+        $masjidId = static::currentMasjidId();
+
+        $query = static::withoutGlobalScopes()->where('group', $group);
+        if ($masjidId) {
+            $query->where('masjid_id', $masjidId);
+        } else {
+            $query->whereNull('masjid_id');
+        }
+
+        return $query->orderBy('sort_order')->get();
     }
 
     /**

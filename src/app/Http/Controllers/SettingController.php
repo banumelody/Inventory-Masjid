@@ -50,7 +50,12 @@ class SettingController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $allSettings = Setting::all();
+        $masjidId = app()->bound('current_masjid_id') ? app('current_masjid_id') : null;
+
+        $allSettings = Setting::withoutGlobalScopes()
+            ->when($masjidId, fn($q) => $q->where('masjid_id', $masjidId))
+            ->when(!$masjidId, fn($q) => $q->whereNull('masjid_id'))
+            ->get();
 
         foreach ($allSettings as $setting) {
             $key = $setting->key;
