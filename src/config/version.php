@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'version' => '5.0.0',
+    'version' => '6.0.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'name' => 'QR Label & Scan',
+    'name' => 'Multi-Tenant SaaS',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     |
     */
 
-    'release_date' => '2026-01-19',
+    'release_date' => '2026-04-10',
 
     /*
     |--------------------------------------------------------------------------
@@ -57,6 +57,21 @@ return [
     */
 
     'history' => [
+        '6.0.0' => [
+            'name' => 'Multi-Tenant SaaS',
+            'date' => '2026-04-10',
+            'highlights' => [
+                'Multi-tenant architecture with row-level isolation',
+                'Superadmin dashboard & masjid management',
+                'Masjid self-registration',
+                'Notification system with overdue alerts',
+                'Multi-language support (ID/EN)',
+                'REST API with Sanctum authentication',
+                'Dashboard widget customization',
+                'Security hardening (XSS, CSRF, injection)',
+                'Soft deletes & breadcrumb navigation',
+            ],
+        ],
         '5.0.0' => [
             'name' => 'QR Label & Scan',
             'date' => '2026-01-19',

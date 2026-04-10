@@ -5,6 +5,97 @@ Semua perubahan penting pada proyek ini akan didokumentasikan di file ini.
 Format berdasarkan [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 dan proyek ini mengikuti [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-04-10
+
+### 🏢 Codename: Multi-Tenant SaaS
+
+Rilis major yang mentransformasi aplikasi menjadi platform SaaS multi-tenant. Setiap masjid memiliki data terisolasi, dengan superadmin yang dapat mengelola seluruh platform.
+
+### Added
+
+- **Multi-Tenant Architecture**
+  - Row-level tenant isolation via MasjidScope global scope
+  - BelongsToMasjid trait untuk auto-scoping 13 model
+  - SetMasjidContext middleware untuk inject tenant context
+  - EnsureMasjidContext middleware untuk guard create/write routes
+
+- **Superadmin Dashboard**
+  - Platform-wide statistics (total masjid, users, items)
+  - Masjid CRUD management (create, edit, suspend, delete)
+  - Tenant context switcher — operate as any masjid
+  - Global activity log with masjid filter
+  - Cross-masjid user transfer
+  - Cross-tenant global report view
+
+- **Masjid Self-Registration**
+  - Public registration form for new mosques
+  - Auto-create admin user, default categories & locations
+  - Masjid status management (active, suspended, pending)
+
+- **Notification System**
+  - In-app notifications with real-time polling
+  - Overdue loan automatic notifications
+  - Mark as read / mark all as read
+  - Redirect URL validation (anti open-redirect)
+
+- **Multi-Language Support (i18n)**
+  - Indonesian (id) and English (en) language files
+  - 200+ translation keys covering all content views
+  - Language switcher in sidebar
+  - SetLocale middleware
+
+- **Dashboard Widget Customization**
+  - 11 toggleable widgets per user
+  - Preferences saved per user in settings
+  - Widget labels fully translatable
+
+- **REST API (Sanctum)**
+  - Token-based authentication (login/logout/me)
+  - Read endpoints: items, categories, locations, loans, stats
+  - Write endpoints: CRUD for items, categories, locations, loans
+  - Tenant-scoped via SetApiMasjidContext middleware
+
+- **User Profile Page**
+  - View/edit name and email
+  - Change password with current password verification
+
+- **UI Enhancements**
+  - Breadcrumb navigation component on 20+ views
+  - Custom Tailwind modal confirmation dialog (replaces browser confirm)
+  - Double-submit prevention on all forms
+  - Export loading indicator with spinner overlay
+
+- **Soft Deletes**
+  - Item, Category, Location, User models support soft delete
+  - Deleted records preserved for audit trail
+
+### Security
+
+- **SVG XSS Prevention** — removed SVG from allowed upload mimes
+- **Open Redirect Prevention** — notification redirect URL validation
+- **CSV Injection Prevention** — sanitize formula characters in exports
+- **BelongsToMasjid on Notification** — tenant-scoped notifications
+- **QR Rate Limiting** — throttle:30,1 on public scan routes
+- **Import Hardening** — 1000 row limit + filename sanitization
+- **Search Input Validation** — max:255 on all search parameters
+- **Backup Route Restriction** — superadmin-only access
+
+### Performance
+
+- Eager loading for item.category in ScanLogController (N+1 fix)
+- Pagination on categories and locations index (was loading all)
+- Database indexes verified on all tenant-scoped tables
+- Image upload error handling with fallback storage
+
+### Technical
+
+- 184 tests, 535 assertions — all passing
+- 20 test files covering Unit, Feature, E2E, Security, Multi-tenant
+- Migration for masjids table, pivot tables, soft deletes
+- DummySeeder with 3 sample masjids and full data
+
+---
+
 ## [5.0.0] - 2026-01-19
 
 ### 🚀 Codename: QR Label & Scan
