@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Inventaris', 'url' => route('items.index')], ['label' => $item->name, 'url' => route('items.show', $item)], ['label' => 'Edit']]" />
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Barang</h1>
 
     <div class="bg-white rounded-lg shadow p-6">

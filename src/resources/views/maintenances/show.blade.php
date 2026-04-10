@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Maintenance', 'url' => route('maintenances.index')], ['label' => $maintenance->item->name ?? 'Detail']]" />
     <div class="mb-6">
-        <a href="{{ route('maintenances.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Daftar</a>
     </div>
 
     <div class="bg-white rounded-lg shadow p-6 mb-6">

@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Import', 'url' => route('imports.index')], ['label' => 'Import Baru']]" />
     <div class="mb-6">
-        <a href="{{ route('imports.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Riwayat Import</a>
     </div>
 
     <div class="bg-white rounded-lg shadow p-6">

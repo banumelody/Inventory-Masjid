@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Tentang']]" />
     <div class="mb-6">
-        <a href="{{ route('dashboard') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Dashboard</a>
     </div>
 
     <div class="bg-white rounded-lg shadow overflow-hidden">

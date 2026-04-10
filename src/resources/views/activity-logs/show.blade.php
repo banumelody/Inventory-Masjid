@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Activity Log']]" />
     <div class="mb-6">
         <a href="{{ route('activity-logs.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Activity Log</a>
     </div>

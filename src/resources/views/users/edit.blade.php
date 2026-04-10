@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Pengguna', 'url' => route('users.index')], ['label' => $user->name, 'url' => route('users.index')], ['label' => 'Edit']]" />
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Pengguna</h1>
 
     <div class="bg-white rounded-lg shadow p-6">

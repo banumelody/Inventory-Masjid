@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('items.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Daftar</a>
+    <x-breadcrumb :items="[['label' => 'Inventaris', 'url' => route('items.index')], ['label' => $item->name]]" />
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

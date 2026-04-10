@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('loans.index') }}" class="text-blue-600 hover:text-blue-800">&larr; Kembali ke Daftar Peminjaman</a>
+    <x-breadcrumb :items="[['label' => 'Peminjaman', 'url' => route('loans.index')], ['label' => 'Detail Peminjaman']]" />
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

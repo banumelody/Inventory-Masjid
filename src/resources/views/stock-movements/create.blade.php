@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Mutasi Stok', 'url' => route('stock-movements.index')], ['label' => 'Tambah']]" />
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Tambah Mutasi Stok</h1>
 
     <div class="bg-white rounded-lg shadow p-6">

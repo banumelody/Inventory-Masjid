@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Feedback', 'url' => route('feedbacks.index')], ['label' => 'Kirim Feedback']]" />
     <h1 class="text-2xl font-bold text-gray-800 mb-6">💬 Kirim Feedback</h1>
 
     <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-6">

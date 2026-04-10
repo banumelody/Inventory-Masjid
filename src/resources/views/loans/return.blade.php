@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
+    <x-breadcrumb :items="[['label' => 'Peminjaman', 'url' => route('loans.index')], ['label' => 'Detail', 'url' => route('loans.show', $loan)], ['label' => 'Kembalikan']]" />
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Kembalikan Barang</h1>
 
     <div class="bg-white rounded-lg shadow p-6 mb-6">
