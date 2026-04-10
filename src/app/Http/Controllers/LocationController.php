@@ -11,7 +11,7 @@ class LocationController extends Controller
 {
     public function index(): View
     {
-        $locations = Location::withCount('items')->orderBy('name')->get();
+        $locations = Location::withCount('items')->orderBy('name')->paginate(10);
         return view('locations.index', compact('locations'));
     }
 
