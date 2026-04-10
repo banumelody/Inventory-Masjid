@@ -110,6 +110,49 @@ class LoanFlowTest extends TestCase
         $this->assertEquals('baik', $loan->returned_condition);
     }
 
+    public function test_loan_show_page_displays_details(): void
+    {
+        $loan = Loan::create([
+            'item_id' => $this->item->id,
+            'borrower_name' => 'Budi Santoso',
+            'borrower_phone' => '08111222333',
+            'quantity' => 2,
+            'borrowed_at' => now()->subDays(3),
+            'due_at' => now()->addDays(4),
+            'notes' => 'Untuk acara pengajian',
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('loans.show', $loan));
+
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        $response->assertSee('08111222333');
+        $response->assertSee('Test Item');
+        $response->assertSee('Untuk acara pengajian');
+        $response->assertSee('Dipinjam');
+    }
+
+    public function test_loan_show_page_displays_returned_status(): void
+    {
+        $loan = Loan::create([
+            'item_id' => $this->item->id,
+            'borrower_name' => 'Ahmad Dahlan',
+            'quantity' => 1,
+            'borrowed_at' => now()->subDays(5),
+            'returned_at' => now(),
+            'returned_condition' => 'baik',
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('loans.show', $loan));
+
+        $response->assertStatus(200);
+        $response->assertSee('Sudah Kembali');
+        $response->assertSee('Baik');
+        $response->assertDontSee('Kembalikan Barang');
+    }
+
     public function test_loan_flow_complete(): void
     {
         // Step 1: Create loan
