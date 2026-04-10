@@ -453,6 +453,34 @@
 
     @yield('scripts')
 
+    {{-- Double-submit prevention for all forms --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    if (form.dataset.submitted === 'true') {
+                        e.preventDefault();
+                        return;
+                    }
+                    form.dataset.submitted = 'true';
+                    const btn = form.querySelector('button[type="submit"]');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                        const originalText = btn.innerHTML;
+                        btn.innerHTML = '<svg class="animate-spin inline -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg> Memproses...';
+                        setTimeout(function() {
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            btn.innerHTML = originalText;
+                            form.dataset.submitted = 'false';
+                        }, 5000);
+                    }
+                });
+            });
+        });
+    </script>
+
     @auth
     <script>
         function fetchNotifCount() {
