@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\BelongsToMasjid;
 
 class Notification extends Model
 {
+    use BelongsToMasjid;
+
     protected $fillable = [
         'user_id',
         'masjid_id',
@@ -24,11 +27,6 @@ class Notification extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function masjid(): BelongsTo
-    {
-        return $this->belongsTo(Masjid::class);
     }
 
     public function scopeUnread($query)
