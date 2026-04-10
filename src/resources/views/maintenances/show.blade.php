@@ -163,7 +163,7 @@
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status" value="cancelled">
-                    <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg" onclick="return confirm('Yakin batalkan maintenance ini?')">
+                    <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg" data-confirm="Yakin batalkan maintenance ini?">
                         ❌ Batalkan
                     </button>
                 </form>
@@ -272,26 +272,26 @@ document.getElementById('upload-photo-form').addEventListener('submit', async fu
 });
 
 async function deletePhoto(photoId) {
-    if (!confirm('Yakin hapus foto ini?')) return;
-    
-    try {
-        const response = await fetch(`/maintenance-photos/${photoId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
+    showConfirmModal('Yakin hapus foto ini?', async function() {
+        try {
+            const response = await fetch(`/maintenance-photos/${photoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                location.reload();
+            } else {
+                alert('Gagal menghapus foto');
             }
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-            location.reload();
-        } else {
-            alert('Gagal menghapus foto');
+        } catch (error) {
+            alert('Terjadi kesalahan');
         }
-    } catch (error) {
-        alert('Terjadi kesalahan');
-    }
+    });
 }
 @endif
 </script>

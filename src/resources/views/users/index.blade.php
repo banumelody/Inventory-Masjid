@@ -43,7 +43,7 @@
                     <a href="{{ route('users.transfer', $user) }}" class="text-indigo-600 hover:text-indigo-900">Transfer</a>
                     @endif
                     @if($user->id !== auth()->id())
-                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus pengguna ini?')">
+                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" data-confirm="Yakin hapus pengguna ini?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>

@@ -35,7 +35,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button onclick="openModal({{ $feedback->id }}, '{{ $feedback->status }}', '{{ addslashes($feedback->admin_notes) }}')" class="text-blue-600 hover:text-blue-900">Update</button>
-                    <form action="{{ route('feedbacks.destroy', $feedback) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
+                    <form action="{{ route('feedbacks.destroy', $feedback) }}" method="POST" class="inline" data-confirm="Yakin hapus?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:text-red-900 ml-2">Hapus</button>

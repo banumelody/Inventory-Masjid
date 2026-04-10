@@ -18,7 +18,7 @@
                         <a href="{{ route('items.edit', $item) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">Edit</a>
                     @endif
                     @if(auth()->user()->canDeleteItems())
-                        <form action="{{ route('items.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus barang ini?')">
+                        <form action="{{ route('items.destroy', $item) }}" method="POST" class="inline" data-confirm="Yakin hapus barang ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">Hapus</button>

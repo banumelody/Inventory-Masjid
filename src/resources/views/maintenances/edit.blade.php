@@ -162,7 +162,7 @@
             </div>
         </form>
         
-        <form id="delete-form" action="{{ route('maintenances.destroy', $maintenance) }}" method="POST" class="hidden" onsubmit="return confirm('Yakin hapus data maintenance ini?')">
+        <form id="delete-form" action="{{ route('maintenances.destroy', $maintenance) }}" method="POST" class="hidden" data-confirm="Yakin hapus data maintenance ini?">
             @csrf
             @method('DELETE')
         </form>
@@ -209,26 +209,26 @@ function removePhotoRow(btn) {
 }
 
 async function deletePhoto(photoId) {
-    if (!confirm('Yakin hapus foto ini?')) return;
-    
-    try {
-        const response = await fetch(`/maintenance-photos/${photoId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
+    showConfirmModal('Yakin hapus foto ini?', async function() {
+        try {
+            const response = await fetch(`/maintenance-photos/${photoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById('photo-' + photoId).remove();
+            } else {
+                alert('Gagal menghapus foto');
             }
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-            document.getElementById('photo-' + photoId).remove();
-        } else {
-            alert('Gagal menghapus foto');
+        } catch (error) {
+            alert('Terjadi kesalahan');
         }
-    } catch (error) {
-        alert('Terjadi kesalahan');
-    }
+    });
 }
 </script>
 @endsection

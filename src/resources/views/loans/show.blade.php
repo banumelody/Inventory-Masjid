@@ -150,7 +150,7 @@
                 </a>
 
                 @if(auth()->user()->isAdmin())
-                    <form action="{{ route('loans.destroy', $loan) }}" method="POST" onsubmit="return confirm('Yakin hapus data peminjaman ini?')">
+                    <form action="{{ route('loans.destroy', $loan) }}" method="POST" data-confirm="Yakin hapus data peminjaman ini?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-semibold">

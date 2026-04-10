@@ -96,7 +96,7 @@
             </div>
             @endif
             @if(auth()->user()->isAdmin())
-            <form action="{{ route('loans.destroy', $loan) }}" method="POST" onsubmit="return confirm('Yakin hapus?')">
+            <form action="{{ route('loans.destroy', $loan) }}" method="POST" data-confirm="Yakin hapus?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">🗑️</button>
@@ -163,7 +163,7 @@
                             <a href="{{ route('loans.qr.print', $loan) }}" class="text-blue-600 hover:text-blue-900 px-2 py-1" title="Cetak QR">🏷️</a>
                             @endif
                             @if(auth()->user()->isAdmin())
-                            <form action="{{ route('loans.destroy', $loan) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
+                            <form action="{{ route('loans.destroy', $loan) }}" method="POST" class="inline" data-confirm="Yakin hapus?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900 px-2 py-1" title="Hapus">🗑️</button>

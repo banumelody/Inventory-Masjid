@@ -503,5 +503,84 @@
         setInterval(fetchNotifCount, 60000);
     </script>
     @endauth
+
+    {{-- Custom confirmation modal --}}
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeConfirmModal()"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 relative transform transition-all">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi</h3>
+                </div>
+                <p id="confirm-modal-message" class="text-gray-600 mb-6"></p>
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors">Batal</button>
+                    <button id="confirm-modal-ok" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">Ya, Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let confirmCallback = null;
+        function showConfirmModal(message, callback) {
+            document.getElementById('confirm-modal-message').textContent = message;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            confirmCallback = callback;
+        }
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            confirmCallback = null;
+        }
+        document.getElementById('confirm-modal-ok').addEventListener('click', function() {
+            if (confirmCallback) confirmCallback();
+            closeConfirmModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeConfirmModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-confirm]').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const message = el.dataset.confirm;
+                    const form = el.closest('form') || (el.tagName === 'FORM' ? el : null);
+                    showConfirmModal(message, function() {
+                        if (form) {
+                            form.dataset.confirmed = 'true';
+                            form.submit();
+                        } else if (el.href) {
+                            window.location.href = el.href;
+                        }
+                    });
+                });
+                const form = el.closest('form');
+                if (form && el.tagName !== 'FORM') {
+                    form.addEventListener('submit', function(e) {
+                        if (form.dataset.confirmed !== 'true') {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            });
+
+            document.querySelectorAll('form[data-confirm]').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    if (form.dataset.confirmed === 'true') return;
+                    e.preventDefault();
+                    showConfirmModal(form.dataset.confirm, function() {
+                        form.dataset.confirmed = 'true';
+                        form.submit();
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

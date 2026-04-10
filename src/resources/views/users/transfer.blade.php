@@ -39,7 +39,7 @@
 
         <div class="flex gap-3">
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold"
-                onclick="return confirm('Yakin ingin memindahkan pengguna ini ke masjid lain?')">
+                data-confirm="Yakin ingin memindahkan pengguna ini ke masjid lain?">
                 Transfer Pengguna
             </button>
             <a href="{{ route('users.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold">Batal</a>

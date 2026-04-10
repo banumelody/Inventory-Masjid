@@ -207,7 +207,7 @@
                                 <a href="{{ route('items.edit', $item) }}" class="text-blue-600 hover:text-blue-900 px-2 py-1" title="Edit">✏️</a>
                             @endif
                             @if(auth()->user()->canDeleteItems())
-                                <form action="{{ route('items.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus barang ini?')">
+                                <form action="{{ route('items.destroy', $item) }}" method="POST" class="inline" data-confirm="Yakin hapus barang ini?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900 px-2 py-1" title="Hapus">🗑️</button>

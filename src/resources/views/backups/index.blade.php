@@ -7,7 +7,7 @@
     <h1 class="text-2xl font-bold text-gray-800">Backup Database</h1>
     <form action="{{ route('backups.create') }}" method="POST" class="inline">
         @csrf
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold" onclick="return confirm('Buat backup sekarang?')">
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold" data-confirm="Buat backup sekarang?">
             + Buat Backup
         </button>
     </form>
@@ -37,7 +37,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $backup->created_at->format('d/m/Y H:i') }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <a href="{{ route('backups.download', $backup) }}" class="text-blue-600 hover:text-blue-900">Download</a>
-                    <form action="{{ route('backups.destroy', $backup) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus backup ini?')">
+                    <form action="{{ route('backups.destroy', $backup) }}" method="POST" class="inline" data-confirm="Yakin hapus backup ini?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>

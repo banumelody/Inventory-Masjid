@@ -26,7 +26,7 @@
             <a href="{{ route('masjids.edit', $masjid) }}" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition text-sm">
                 ✏️ Edit
             </a>
-            <form action="{{ route('masjids.destroy', $masjid) }}" method="POST" class="inline" onsubmit="return confirm('PERINGATAN: Semua data masjid (item, peminjaman, user, dll) akan dihapus permanen. Lanjutkan?')">
+            <form action="{{ route('masjids.destroy', $masjid) }}" method="POST" class="inline" data-confirm="PERINGATAN: Semua data masjid (item, peminjaman, user, dll) akan dihapus permanen. Lanjutkan?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition text-sm">

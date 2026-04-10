@@ -26,7 +26,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $category->items_count }} barang</td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                     <a href="{{ route('categories.edit', $category) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
-                    <form action="{{ route('categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus kategori ini?')">
+                    <form action="{{ route('categories.destroy', $category) }}" method="POST" class="inline" data-confirm="Yakin hapus kategori ini?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
