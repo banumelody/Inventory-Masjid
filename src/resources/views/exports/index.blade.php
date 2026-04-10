@@ -55,8 +55,33 @@ function exportData(format) {
     const url = format === 'excel' 
         ? '{{ route("export.excel") }}' 
         : '{{ route("export.pdf") }}';
-    
-    window.location.href = url + '?' + params.toString();
+
+    // Show loading indicator
+    const overlay = document.getElementById('export-loading');
+    overlay.classList.remove('hidden');
+
+    // Use a hidden iframe to detect download completion
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url + '?' + params.toString();
+    document.body.appendChild(iframe);
+
+    // Hide overlay after timeout (download should have started)
+    setTimeout(function() {
+        overlay.classList.add('hidden');
+        document.body.removeChild(iframe);
+    }, 5000);
 }
 </script>
+
+{{-- Export loading overlay --}}
+<div id="export-loading" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div class="bg-white rounded-xl shadow-2xl p-8 flex flex-col items-center gap-4">
+        <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        <p class="text-gray-700 font-medium">Sedang menyiapkan export...</p>
+    </div>
+</div>
 @endsection
