@@ -159,44 +159,49 @@ class ItemController extends Controller
     {
         $filename = 'items/' . uniqid() . '_' . time() . '.jpg';
         
-        // Read and resize image
-        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
-        
-        // Get original dimensions
-        $origWidth = imagesx($image);
-        $origHeight = imagesy($image);
-        
-        // Calculate new dimensions (max 1200px)
-        $maxSize = 1200;
-        if ($origWidth > $maxSize || $origHeight > $maxSize) {
-            if ($origWidth > $origHeight) {
-                $newWidth = $maxSize;
-                $newHeight = (int) ($origHeight * ($maxSize / $origWidth));
-            } else {
-                $newHeight = $maxSize;
-                $newWidth = (int) ($origWidth * ($maxSize / $origHeight));
+        try {
+            $image = @imagecreatefromstring(file_get_contents($file->getRealPath()));
+            
+            if (!$image) {
+                // Fallback: store original file without resize
+                return $file->store('items', 'public');
             }
-        } else {
-            $newWidth = $origWidth;
-            $newHeight = $origHeight;
+            
+            $origWidth = imagesx($image);
+            $origHeight = imagesy($image);
+            
+            $maxSize = 1200;
+            if ($origWidth > $maxSize || $origHeight > $maxSize) {
+                if ($origWidth > $origHeight) {
+                    $newWidth = $maxSize;
+                    $newHeight = (int) ($origHeight * ($maxSize / $origWidth));
+                } else {
+                    $newHeight = $maxSize;
+                    $newWidth = (int) ($origWidth * ($maxSize / $origHeight));
+                }
+            } else {
+                $newWidth = $origWidth;
+                $newHeight = $origHeight;
+            }
+            
+            $resized = imagecreatetruecolor($newWidth, $newHeight);
+            imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+            
+            $fullPath = storage_path('app/public/' . $filename);
+            $dir = dirname($fullPath);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            
+            imagejpeg($resized, $fullPath, 85);
+            
+            imagedestroy($image);
+            imagedestroy($resized);
+            
+            return $filename;
+        } catch (\Throwable $e) {
+            // Fallback: store original file without resize
+            return $file->store('items', 'public');
         }
-        
-        // Create resized image
-        $resized = imagecreatetruecolor($newWidth, $newHeight);
-        imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
-        
-        // Save to storage
-        $fullPath = storage_path('app/public/' . $filename);
-        $dir = dirname($fullPath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-        
-        imagejpeg($resized, $fullPath, 85);
-        
-        imagedestroy($image);
-        imagedestroy($resized);
-        
-        return $filename;
     }
 }
