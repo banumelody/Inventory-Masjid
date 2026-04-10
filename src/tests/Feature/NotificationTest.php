@@ -215,4 +215,23 @@ class NotificationTest extends TestCase
         $response = $this->get(route('notifications.index'));
         $response->assertRedirect(route('login'));
     }
+
+    public function test_notification_external_link_blocked(): void
+    {
+        $notification = Notification::create([
+            'user_id' => $this->admin->id,
+            'masjid_id' => $this->masjid->id,
+            'type' => 'loan_overdue',
+            'title' => 'Malicious',
+            'message' => 'Evil redirect',
+            'link' => 'https://evil.example.com/phish',
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->withSession(['current_masjid_id' => $this->masjid->id])
+            ->post(route('notifications.markRead', $notification));
+
+        // Should redirect to notifications index, not external site
+        $response->assertRedirect(route('notifications.index'));
+    }
 }

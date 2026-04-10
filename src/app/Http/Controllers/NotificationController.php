@@ -27,7 +27,7 @@ class NotificationController extends Controller
 
         $notification->markAsRead();
 
-        if ($notification->link) {
+        if ($notification->link && $this->isSafeRedirectUrl($notification->link)) {
             return redirect($notification->link);
         }
 
@@ -51,5 +51,22 @@ class NotificationController extends Controller
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    /**
+     * Validate that a redirect URL is safe (internal only)
+     */
+    private function isSafeRedirectUrl(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        // Allow relative URLs (no host)
+        if (!isset($parsed['host'])) {
+            return true;
+        }
+
+        // Allow only same-host URLs
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        return $parsed['host'] === $appHost;
     }
 }
