@@ -16,6 +16,7 @@ class LoanController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => 'nullable|string|max:255']);
         $query = Loan::with(['item.category', 'item.location']);
 
         if ($request->filled('status')) {

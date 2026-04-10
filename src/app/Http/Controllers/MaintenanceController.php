@@ -17,6 +17,7 @@ class MaintenanceController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => 'nullable|string|max:255']);
         $query = Maintenance::with(['item.category', 'item.location', 'user', 'photos']);
 
         // Filter by status

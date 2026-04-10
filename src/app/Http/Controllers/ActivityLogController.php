@@ -12,6 +12,7 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => 'nullable|string|max:255']);
         $user = auth()->user();
         $isGlobalView = $user->is_superadmin && !app()->bound('current_masjid_id');
 

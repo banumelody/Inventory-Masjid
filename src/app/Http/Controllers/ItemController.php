@@ -16,6 +16,7 @@ class ItemController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => 'nullable|string|max:255']);
         $query = Item::with(['category', 'location']);
 
         if ($request->filled('search')) {
