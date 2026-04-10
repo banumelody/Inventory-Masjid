@@ -1,31 +1,31 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - Inventory Masjid')
+@section('title', __('ui.dashboard') . ' - Inventory Masjid')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📊 Dashboard</h1>
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📊 {{ __('ui.dashboard') }}</h1>
     <button onclick="toggleWidgetSettings()" class="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-gray-600">
-        ⚙️ Atur Widget
+        ⚙️ {{ __('ui.widget_settings') }}
     </button>
 </div>
 
 <!-- Widget Settings Panel -->
 <div id="widget-settings" class="hidden bg-white rounded-lg shadow p-4 mb-6 border border-blue-200">
-    <h3 class="font-semibold text-gray-700 mb-3">Tampilkan/Sembunyikan Widget</h3>
+    <h3 class="font-semibold text-gray-700 mb-3">{{ __('ui.show_hide_widgets') }}</h3>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         @php $widgetLabels = [
-            'stats_overview' => 'Ringkasan Statistik',
-            'charts' => 'Grafik Tren & Kondisi',
-            'most_borrowed' => 'Barang Paling Dipinjam',
-            'condition_summary' => 'Ringkasan Kondisi',
-            'overdue_loans' => 'Peminjaman Terlambat',
-            'recent_items' => 'Barang Terbaru',
-            'recent_movements' => 'Mutasi Terbaru',
-            'items_by_category' => 'Per Kategori',
-            'items_by_location' => 'Per Lokasi',
-            'recent_scans' => 'Scan QR Terbaru',
-            'quick_actions' => 'Aksi Cepat',
+            'stats_overview' => __('ui.widget_stats_overview'),
+            'charts' => __('ui.widget_charts'),
+            'most_borrowed' => __('ui.widget_most_borrowed'),
+            'condition_summary' => __('ui.widget_condition_summary'),
+            'overdue_loans' => __('ui.widget_overdue_loans'),
+            'recent_items' => __('ui.widget_recent_items'),
+            'recent_movements' => __('ui.widget_recent_movements'),
+            'items_by_category' => __('ui.widget_items_by_category'),
+            'items_by_location' => __('ui.widget_items_by_location'),
+            'recent_scans' => __('ui.widget_recent_scans'),
+            'quick_actions' => __('ui.widget_quick_actions'),
         ]; @endphp
         @foreach($widgetLabels as $key => $label)
         <label class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-50">
@@ -42,23 +42,23 @@
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8" data-widget-section="stats_overview">
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold text-green-600">{{ $stats['total_items'] }}</div>
-        <div class="text-xs md:text-sm text-gray-500">Jenis Barang</div>
+        <div class="text-xs md:text-sm text-gray-500">{{ __('ui.total_items') }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold text-blue-600">{{ number_format($stats['total_quantity']) }}</div>
-        <div class="text-xs md:text-sm text-gray-500">Total Stok</div>
+        <div class="text-xs md:text-sm text-gray-500">{{ __('ui.total_stock') }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold text-yellow-600">{{ $stats['active_loans'] }}</div>
-        <div class="text-xs md:text-sm text-gray-500">Dipinjam</div>
+        <div class="text-xs md:text-sm text-gray-500">{{ __('ui.borrowed') }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold {{ $stats['overdue_loans'] > 0 ? 'text-red-600' : 'text-gray-400' }}">{{ $stats['overdue_loans'] }}</div>
-        <div class="text-xs md:text-sm text-gray-500">Terlambat</div>
+        <div class="text-xs md:text-sm text-gray-500">{{ __('ui.overdue') }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
         <div class="text-2xl md:text-3xl font-bold text-purple-600">{{ $stats['items_with_qr'] }}</div>
-        <div class="text-xs md:text-sm text-gray-500">🏷️ Punya QR</div>
+        <div class="text-xs md:text-sm text-gray-500">🏷️ {{ __('ui.has_qr') }}</div>
     </div>
 </div>
 @endif
@@ -68,7 +68,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
     <!-- Loan Trends Chart -->
     <div class="bg-white rounded-lg shadow p-4 md:p-6">
-        <h2 class="text-base md:text-lg font-semibold mb-4">📈 Tren Peminjaman (12 Bulan)</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-4">📈 {{ __('ui.loan_trends') }}</h2>
         <div class="relative" style="height: 250px;">
             <canvas id="loanTrendsChart"></canvas>
         </div>
@@ -76,7 +76,7 @@
 
     <!-- Condition Pie Chart -->
     <div class="bg-white rounded-lg shadow p-4 md:p-6">
-        <h2 class="text-base md:text-lg font-semibold mb-4">🥧 Kondisi Barang</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-4">🥧 {{ __('ui.item_condition') }}</h2>
         <div class="relative flex justify-center" style="height: 250px;">
             <canvas id="conditionChart"></canvas>
         </div>
@@ -87,7 +87,7 @@
 @if($widgetPrefs['most_borrowed'] ?? true)
 <!-- Most Borrowed Items Chart -->
 <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6 md:mb-8">
-    <h2 class="text-base md:text-lg font-semibold mb-4">🏆 Barang Paling Sering Dipinjam</h2>
+    <h2 class="text-base md:text-lg font-semibold mb-4">🏆 {{ __('ui.most_borrowed') }}</h2>
     <div class="relative" style="height: 300px;">
         <canvas id="mostBorrowedChart"></canvas>
     </div>
@@ -102,7 +102,7 @@
             <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">✅</span>
             <div>
                 <div class="text-xl md:text-2xl font-bold text-green-700">{{ $stats['items_good'] }}</div>
-                <div class="text-xs md:text-sm text-green-600">Baik</div>
+                <div class="text-xs md:text-sm text-green-600">{{ __('ui.condition_good') }}</div>
             </div>
         </div>
     </div>
@@ -111,7 +111,7 @@
             <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">⚠️</span>
             <div>
                 <div class="text-xl md:text-2xl font-bold text-yellow-700">{{ $stats['items_need_repair'] }}</div>
-                <div class="text-xs md:text-sm text-yellow-600">Perbaikan</div>
+                <div class="text-xs md:text-sm text-yellow-600">{{ __('ui.condition_repair') }}</div>
             </div>
         </div>
     </div>
@@ -120,7 +120,7 @@
             <span class="text-xl md:text-2xl md:mr-3 mb-1 md:mb-0">❌</span>
             <div>
                 <div class="text-xl md:text-2xl font-bold text-red-700">{{ $stats['items_broken'] }}</div>
-                <div class="text-xs md:text-sm text-red-600">Rusak</div>
+                <div class="text-xs md:text-sm text-red-600">{{ __('ui.condition_broken') }}</div>
             </div>
         </div>
     </div>
@@ -129,7 +129,7 @@
 
 @if(($widgetPrefs['overdue_loans'] ?? true) && $overdueLoans->count() > 0)
 <div class="bg-red-50 border border-red-300 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-    <h2 class="text-base md:text-lg font-semibold text-red-800 mb-3">🚨 Peminjaman Terlambat</h2>
+    <h2 class="text-base md:text-lg font-semibold text-red-800 mb-3">🚨 {{ __('ui.overdue_loans') }}</h2>
     <div class="space-y-2">
         @foreach($overdueLoans as $loan)
         <div class="bg-white rounded p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
@@ -153,7 +153,7 @@
     @if($widgetPrefs['recent_items'] ?? true)
     <!-- Recent Items -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
-        <h2 class="text-base md:text-lg font-semibold mb-3">📦 Barang Terbaru</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-3">📦 {{ __('ui.recent_items') }}</h2>
         <div class="space-y-2">
             @forelse($recentItems as $item)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -164,7 +164,7 @@
                 <div class="text-sm text-gray-500 flex-shrink-0">{{ $item->quantity }} {{ $item->unit }}</div>
             </div>
             @empty
-            <p class="text-gray-500 text-sm">Belum ada barang.</p>
+            <p class="text-gray-500 text-sm">{{ __('ui.no_items') }}</p>
             @endforelse
         </div>
         <a href="{{ route('items.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm touch-target py-2">
@@ -176,7 +176,7 @@
     @if($widgetPrefs['recent_movements'] ?? true)
     <!-- Recent Movements -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
-        <h2 class="text-base md:text-lg font-semibold mb-3">📊 Mutasi Terbaru</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-3">📊 {{ __('ui.recent_movements') }}</h2>
         <div class="space-y-2">
             @forelse($recentMovements as $movement)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -189,7 +189,7 @@
                 </div>
             </div>
             @empty
-            <p class="text-gray-500 text-sm">Belum ada mutasi.</p>
+            <p class="text-gray-500 text-sm">{{ __('ui.no_mutations') }}</p>
             @endforelse
         </div>
         <a href="{{ route('stock-movements.index') }}" class="block text-center text-blue-600 hover:text-blue-800 mt-3 text-sm touch-target py-2">
@@ -201,7 +201,7 @@
     @if($widgetPrefs['items_by_category'] ?? true)
     <!-- Items by Category -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
-        <h2 class="text-base md:text-lg font-semibold mb-3">📁 Per Kategori</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-3">📁 {{ __('ui.by_category') }}</h2>
         <div class="space-y-2">
             @foreach($itemsByCategory as $category)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -216,7 +216,7 @@
     @if($widgetPrefs['items_by_location'] ?? true)
     <!-- Items by Location -->
     <div class="bg-white rounded-lg shadow p-3 md:p-4">
-        <h2 class="text-base md:text-lg font-semibold mb-3">📍 Per Lokasi</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-3">📍 {{ __('ui.by_location') }}</h2>
         <div class="space-y-2">
             @foreach($itemsByLocation as $location)
             <div class="flex justify-between items-center py-2 border-b last:border-0">
@@ -232,7 +232,7 @@
 @if(($widgetPrefs['recent_scans'] ?? true) && $recentScans->count() > 0)
 <div class="bg-white rounded-lg shadow p-3 md:p-4 mb-6 md:mb-8">
     <div class="flex justify-between items-center mb-3">
-        <h2 class="text-base md:text-lg font-semibold">📷 Scan QR Terbaru</h2>
+        <h2 class="text-base md:text-lg font-semibold">📷 {{ __('ui.recent_scans') }}</h2>
         @if(auth()->user()->isAdmin())
         <a href="{{ route('scan-logs.index') }}" class="text-blue-600 hover:text-blue-800 text-sm">Lihat Semua →</a>
         @endif
@@ -277,19 +277,19 @@
 @if($widgetPrefs['quick_actions'] ?? true)
 <!-- Quick Actions -->
 <div class="bg-white rounded-lg shadow p-3 md:p-4">
-    <h2 class="text-base md:text-lg font-semibold mb-3">⚡ Aksi Cepat</h2>
+    <h2 class="text-base md:text-lg font-semibold mb-3">⚡ {{ __('ui.quick_actions') }}</h2>
     <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 md:gap-3">
         @if(auth()->user()->canEditItems())
-        <a href="{{ route('items.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">+ Tambah Barang</a>
+        <a href="{{ route('items.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">+ {{ __('ui.add_item') }}</a>
         @endif
         @if(auth()->user()->canManageLoans())
-        <a href="{{ route('loans.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📤 Pinjamkan</a>
-        <a href="{{ route('qrcode.audit-scan') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📋 Audit Scan</a>
+        <a href="{{ route('loans.create') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📤 {{ __('ui.lend') }}</a>
+        <a href="{{ route('qrcode.audit-scan') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📋 {{ __('ui.audit_scan') }}</a>
         @endif
         @if(auth()->user()->canManageStock())
-        <a href="{{ route('stock-movements.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📊 Mutasi</a>
+        <a href="{{ route('stock-movements.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📊 {{ __('ui.stock_mutation') }}</a>
         @endif
-        <a href="{{ route('export.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📥 Export</a>
+        <a href="{{ route('export.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-center text-sm md:text-base touch-target">📥 {{ __('ui.export') }}</a>
     </div>
 </div>
 @endif

@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Maintenance - Inventory Masjid')
+@section('title', __('ui.maintenance_list') . ' - Inventory Masjid')
 
 @section('content')
 <!-- Header -->
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-    <h1 class="text-xl md:text-2xl font-bold text-gray-800">🔧 Maintenance</h1>
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800">🔧 {{ __('ui.maintenances') }}</h1>
     @if(auth()->user()->canEditItems())
     <a href="{{ route('maintenances.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold text-center touch-target">
-        + Tambah Maintenance
+        + {{ __('ui.add_maintenance') }}
     </a>
     @endif
 </div>
@@ -17,7 +17,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 md:p-4">
         <div class="text-2xl font-bold text-yellow-700">{{ $stats['pending'] }}</div>
-        <div class="text-xs text-yellow-600">Menunggu</div>
+        <div class="text-xs text-yellow-600">{{ __('ui.status_pending') }}</div>
     </div>
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
         <div class="text-2xl font-bold text-blue-700">{{ $stats['in_progress'] }}</div>

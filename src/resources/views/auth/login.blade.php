@@ -21,7 +21,7 @@
                 <div class="text-5xl md:text-6xl mb-2">🕌</div>
             @endif
             <h1 class="text-2xl md:text-3xl font-bold text-green-700">{{ \App\Models\Setting::appName() }}</h1>
-            <p class="text-gray-600 mt-2 text-sm md:text-base">Silakan login untuk melanjutkan</p>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">{{ __('ui.login_title') }}</p>
         </div>
 
         @if(session('success'))
@@ -48,14 +48,14 @@
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">{{ __('ui.email') }}</label>
                     <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
                         autocomplete="email" inputmode="email"
                         class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-green-500 focus:border-green-500 touch-target">
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">{{ __('ui.password') }}</label>
                     <input type="password" name="password" id="password" required
                         autocomplete="current-password"
                         class="w-full border border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-green-500 focus:border-green-500 touch-target">
@@ -64,19 +64,19 @@
                 <div class="flex items-center justify-between mb-6">
                     <label class="flex items-center">
                         <input type="checkbox" name="remember" class="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
-                        <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
+                        <span class="ml-2 text-sm text-gray-600">{{ __('ui.remember_me') }}</span>
                     </label>
-                    <a href="{{ route('password.request') }}" class="text-sm text-green-600 hover:text-green-800">Lupa password?</a>
+                    <a href="{{ route('password.request') }}" class="text-sm text-green-600 hover:text-green-800">{{ __('ui.forgot_password') }}</a>
                 </div>
 
                 <button type="submit" class="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-4 rounded-lg font-semibold text-base touch-target">
-                    Login
+                    {{ __('ui.login') }}
                 </button>
             </form>
 
             <div class="text-center mt-4">
-                <p class="text-sm text-gray-500">Belum terdaftar?
-                    <a href="{{ route('register') }}" class="text-green-600 hover:text-green-800 font-semibold">Daftarkan Masjid Anda</a>
+                <p class="text-sm text-gray-500">
+                    <a href="{{ route('register') }}" class="text-green-600 hover:text-green-800 font-semibold">{{ __('ui.register_masjid') }}</a>
                 </p>
             </div>
 

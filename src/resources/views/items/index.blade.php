@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Inventaris - Inventory Masjid')
+@section('title', __('ui.item_list') . ' - Inventory Masjid')
 
 @section('content')
 <!-- Header -->
 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📦 Daftar Inventaris</h1>
+    <h1 class="text-xl md:text-2xl font-bold text-gray-800">📦 {{ __('ui.item_list') }}</h1>
     <div class="flex flex-wrap gap-2">
         <!-- Scan QR Button -->
         <a href="{{ route('qrcode.scan') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold text-center touch-target">
-            📷 Scan QR
+            📷 {{ __('ui.scan_qr') }}
         </a>
         @if(auth()->user()->canEditItems())
         <!-- Bulk Print QR Button -->
         <a href="{{ route('qrcode.bulk') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-semibold text-center touch-target">
-            🏷️ Cetak Label
+            🏷️ {{ __('ui.print_label') }}
         </a>
         <a href="{{ route('items.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold text-center touch-target">
-            + Tambah Barang
+            + {{ __('ui.add_item_title') }}
         </a>
         @endif
     </div>
@@ -27,15 +27,15 @@
 <div class="bg-white rounded-lg shadow p-3 md:p-4 mb-4 md:mb-6">
     <form action="{{ route('items.index') }}" method="GET" class="space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-4 md:items-end">
         <div class="flex-1 min-w-0 md:min-w-[200px]">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Cari Nama</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama barang..."
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.item_name') }}</label>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ui.search_placeholder') }}"
                 class="w-full border border-gray-300 rounded-lg px-4 py-3 md:py-2 text-base">
         </div>
         <div class="grid grid-cols-2 gap-3 md:contents">
             <div class="md:w-48">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.category') }}</label>
                 <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-3 md:py-2 text-base">
-                    <option value="">Semua</option>
+                    <option value="">{{ __('ui.all') }}</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
@@ -44,9 +44,9 @@
                 </select>
             </div>
             <div class="md:w-48">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.location') }}</label>
                 <select name="location_id" class="w-full border border-gray-300 rounded-lg px-3 py-3 md:py-2 text-base">
-                    <option value="">Semua</option>
+                    <option value="">{{ __('ui.all') }}</option>
                     @foreach($locations as $location)
                         <option value="{{ $location->id }}" {{ request('location_id') == $location->id ? 'selected' : '' }}>
                             {{ $location->name }}
@@ -57,7 +57,7 @@
         </div>
         <div class="flex gap-2">
             <button type="submit" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:py-2 rounded-lg font-semibold touch-target">
-                Filter
+                {{ __('ui.filter') }}
             </button>
             <a href="{{ route('items.index') }}" class="flex-1 md:flex-none bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 md:py-2 rounded-lg font-semibold text-center touch-target">
                 Reset
@@ -110,7 +110,7 @@
         <!-- Actions -->
         <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t">
             <a href="{{ route('items.show', $item) }}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-center text-sm font-medium">
-                Detail
+                {{ __('ui.show') }}
             </a>
             @if(auth()->user()->canManageLoans() && $item->available_quantity > 0)
                 <a href="{{ route('loans.create', ['item_id' => $item->id]) }}" class="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-2 rounded-lg text-center text-sm font-medium">
@@ -132,10 +132,10 @@
     @empty
     <div class="bg-white rounded-lg shadow p-8 text-center text-gray-500">
         <div class="text-4xl mb-2">📦</div>
-        <p>Belum ada barang.</p>
+        <p>{{ __('ui.no_items') }}</p>
         @if(auth()->user()->canEditItems())
         <a href="{{ route('items.create') }}" class="inline-block mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold">
-            + Tambah Barang Pertama
+            + {{ __('ui.add_item_title') }}
         </a>
         @endif
     </div>
@@ -148,13 +148,13 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Kategori</th>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Lokasi</th>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
-                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kondisi</th>
-                    <th class="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ui.photo') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ui.name') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">{{ __('ui.category') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">{{ __('ui.location') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ui.total_stock_short') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ui.condition') }}</th>
+                    <th class="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ui.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -220,7 +220,7 @@
                 <tr>
                     <td colspan="7" class="px-6 py-8 text-center text-gray-500">
                         <div class="text-4xl mb-2">📦</div>
-                        <p>Belum ada barang.</p>
+                        <p>{{ __('ui.no_items') }}</p>
                     </td>
                 </tr>
                 @endforelse
