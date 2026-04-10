@@ -283,4 +283,28 @@ class E2eInventoryFlowTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
     }
+
+    public function test_export_csv_sanitizes_formula_injection(): void
+    {
+        $category = Category::first() ?? Category::create(['name' => 'Test']);
+        $location = Location::first() ?? Location::create(['name' => 'Test']);
+
+        Item::create([
+            'name' => '=CMD("calc")',
+            'category_id' => $category->id,
+            'location_id' => $location->id,
+            'quantity' => 1,
+            'unit' => 'pcs',
+            'condition' => 'baik',
+            'note' => '+SUM(A1:A10)',
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('export.excel'));
+        $response->assertStatus(200);
+
+        $content = $response->getContent();
+        // Formula-like values should be prefixed with single quote
+        $this->assertStringContainsString("'=CMD", $content);
+        $this->assertStringContainsString("'+SUM", $content);
+    }
 }

@@ -92,16 +92,31 @@ class ExportController extends Controller
             $output .= sprintf(
                 "%d,\"%s\",\"%s\",\"%s\",%d,\"%s\",\"%s\",\"%s\"\n",
                 $no++,
-                str_replace('"', '""', $item->name),
-                str_replace('"', '""', $item->category->name),
-                str_replace('"', '""', $item->location->name),
+                $this->sanitizeCsvValue($item->name),
+                $this->sanitizeCsvValue($item->category->name),
+                $this->sanitizeCsvValue($item->location->name),
                 $item->quantity,
-                str_replace('"', '""', $item->unit),
+                $this->sanitizeCsvValue($item->unit),
                 $condition,
-                str_replace('"', '""', $item->note ?? '')
+                $this->sanitizeCsvValue($item->note ?? '')
             );
         }
         
         return $output;
+    }
+
+    /**
+     * Sanitize CSV value to prevent formula injection.
+     * Prefixes dangerous characters with a single quote to neutralize them in Excel.
+     */
+    protected function sanitizeCsvValue(string $value): string
+    {
+        $value = str_replace('"', '""', $value);
+
+        if (preg_match('/^[=+\-@\t\r]/', $value)) {
+            $value = "'" . $value;
+        }
+
+        return $value;
     }
 }
