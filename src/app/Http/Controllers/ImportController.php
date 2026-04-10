@@ -46,8 +46,14 @@ class ImportController extends Controller
                 return back()->with('error', 'File kosong atau tidak dapat dibaca.');
             }
 
+            if (count($data) > 1000) {
+                return back()->with('error', 'Maksimal 1000 baris per import. File ini memiliki ' . count($data) . ' baris.');
+            }
+
+            $sanitizedFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+
             // Store in session for processing
-            session(['import_data' => $data, 'import_type' => $type, 'import_filename' => $file->getClientOriginalName()]);
+            session(['import_data' => $data, 'import_type' => $type, 'import_filename' => $sanitizedFilename]);
 
             // Get column mapping suggestions
             $headers = array_keys($data[0] ?? []);
