@@ -48,10 +48,10 @@ Route::get('/help/faq', [HelpController::class, 'faq'])->name('help.faq');
 Route::get('/help/guide', [HelpController::class, 'guide'])->name('help.guide');
 
 // Public QR scan redirect (accessible without login for easy scanning)
-Route::get('/i/{qrKey}', [QrCodeController::class, 'handleScan'])->name('qrcode.redirect');
-
-// Public loan return scan redirect
-Route::get('/loans/return-scan/{qrKey}', [LoanController::class, 'handleScanReturn'])->name('loans.scan-return.handle');
+Route::middleware('throttle:30,1')->group(function () {
+    Route::get('/i/{qrKey}', [QrCodeController::class, 'handleScan'])->name('qrcode.redirect');
+    Route::get('/loans/return-scan/{qrKey}', [LoanController::class, 'handleScanReturn'])->name('loans.scan-return.handle');
+});
 
 // Auth routes
 Route::middleware('guest')->group(function () {
