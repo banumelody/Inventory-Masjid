@@ -16,17 +16,31 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\SetApiMasjidContext::cla
     // Dashboard stats
     Route::get('/stats', [ItemController::class, 'stats']);
 
-    // Items
+    // Items (CRUD)
     Route::get('/items', [ItemController::class, 'index']);
+    Route::post('/items', [ItemController::class, 'store']);
     Route::get('/items/{item}', [ItemController::class, 'show']);
+    Route::put('/items/{item}', [ItemController::class, 'update']);
+    Route::delete('/items/{item}', [ItemController::class, 'destroy']);
 
-    // Categories & Locations
+    // Categories (CRUD)
     Route::get('/categories', [ItemController::class, 'categories']);
-    Route::get('/locations', [ItemController::class, 'locations']);
+    Route::post('/categories', [ItemController::class, 'storeCategory']);
+    Route::put('/categories/{category}', [ItemController::class, 'updateCategory']);
+    Route::delete('/categories/{category}', [ItemController::class, 'destroyCategory']);
 
-    // Loans
+    // Locations (CRUD)
+    Route::get('/locations', [ItemController::class, 'locations']);
+    Route::post('/locations', [ItemController::class, 'storeLocation']);
+    Route::put('/locations/{location}', [ItemController::class, 'updateLocation']);
+    Route::delete('/locations/{location}', [ItemController::class, 'destroyLocation']);
+
+    // Loans (CRUD)
     Route::get('/loans', [ItemController::class, 'loans']);
+    Route::post('/loans', [ItemController::class, 'storeLoan']);
     Route::get('/loans/{loan}', [ItemController::class, 'loanShow']);
+    Route::put('/loans/{loan}/return', [ItemController::class, 'returnLoan']);
+    Route::delete('/loans/{loan}', [ItemController::class, 'destroyLoan']);
 
     // Stock Movements
     Route::get('/stock-movements', [ItemController::class, 'stockMovements']);
