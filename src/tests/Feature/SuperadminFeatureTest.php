@@ -480,13 +480,22 @@ class SuperadminFeatureTest extends TestCase
             '/categories/create',
             '/locations/create',
             '/maintenances/create',
+            '/loans/create',
+            '/stock-movements/create',
+            '/feedbacks/create',
+            '/users',
+            '/settings',
+            '/imports',
         ];
 
         foreach ($routesThatShouldWork as $route) {
             $response = $this->actingAs($this->superadmin)
                 ->withSession(['current_masjid_id' => $this->masjidA->id])
                 ->get($route);
-            $response->assertStatus(200, "Route $route should work for superadmin with context");
+            $this->assertTrue(
+                $response->status() === 200,
+                "Route $route should return 200 for superadmin with context, got {$response->status()}"
+            );
         }
     }
 
