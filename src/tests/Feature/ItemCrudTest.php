@@ -130,7 +130,7 @@ class ItemCrudTest extends TestCase
             ->delete(route('items.destroy', $item));
 
         $response->assertRedirect(route('items.index'));
-        $this->assertDatabaseMissing('items', ['id' => $item->id]);
+        $this->assertSoftDeleted('items', ['id' => $item->id]);
     }
 
     public function test_viewer_cannot_delete_item(): void

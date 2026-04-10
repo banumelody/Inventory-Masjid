@@ -225,7 +225,7 @@ class E2eInventoryFlowTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->delete(route('locations.destroy', $location));
         $response->assertRedirect(route('locations.index'));
-        $this->assertDatabaseMissing('locations', ['name' => 'Mushola Wanita']);
+        $this->assertSoftDeleted('locations', ['name' => 'Mushola Wanita']);
     }
 
     public function test_overdue_loan_detection(): void
