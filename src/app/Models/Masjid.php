@@ -49,6 +49,51 @@ class Masjid extends Model
         return $this->hasMany(Loan::class);
     }
 
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(Maintenance::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function scanLogs(): HasMany
+    {
+        return $this->hasMany(ScanLog::class);
+    }
+
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
+    public function importLogs(): HasMany
+    {
+        return $this->hasMany(ImportLog::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function settings(): HasMany
+    {
+        return $this->hasMany(Setting::class);
+    }
+
+    public function backups(): HasMany
+    {
+        return $this->hasMany(Backup::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active';
