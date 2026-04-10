@@ -12,6 +12,7 @@ use App\Models\Loan;
 use App\Models\StockMovement;
 use App\Models\Maintenance;
 use App\Models\ActivityLog;
+use App\Models\Setting;
 use App\Scopes\MasjidScope;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -247,5 +248,28 @@ class SecurityMultiTenantTest extends TestCase
 
         $response = $this->actingAs($this->adminA)->get(route('stock-movements.index'));
         $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function settings_rejects_svg_upload()
+    {
+        // Create an image-type setting for the masjid
+        Setting::withoutGlobalScopes()->create([
+            'key' => 'app_logo',
+            'value' => null,
+            'type' => 'image',
+            'group' => 'appearance',
+            'label' => 'Logo Aplikasi',
+            'masjid_id' => $this->masjidA->id,
+        ]);
+
+        $svgFile = \Illuminate\Http\UploadedFile::fake()->create('malicious.svg', 100, 'image/svg+xml');
+
+        $response = $this->actingAs($this->adminA)
+            ->put(route('settings.update'), [
+                'app_logo' => $svgFile,
+            ]);
+
+        $response->assertSessionHasErrors('app_logo');
     }
 }

@@ -65,7 +65,7 @@ class SettingController extends Controller
                 if ($request->hasFile($key)) {
                     // Validate image
                     $request->validate([
-                        $key => 'image|mimes:jpeg,png,jpg,gif,svg,ico|max:2048',
+                        $key => 'image|mimes:jpeg,png,jpg,gif,ico|max:2048',
                     ]);
 
                     // Delete old image
