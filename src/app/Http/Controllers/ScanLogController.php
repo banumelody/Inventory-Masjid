@@ -14,7 +14,7 @@ class ScanLogController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = ScanLog::with(['item', 'user'])
+        $query = ScanLog::with(['item.category', 'user'])
             ->orderBy('scanned_at', 'desc');
 
         // Filter by item
@@ -71,7 +71,7 @@ class ScanLogController extends Controller
      */
     public function export(Request $request)
     {
-        $query = ScanLog::with(['item', 'user'])
+        $query = ScanLog::with(['item.category', 'user'])
             ->orderBy('scanned_at', 'desc');
 
         // Apply same filters as index
